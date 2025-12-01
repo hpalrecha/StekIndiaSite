@@ -36,55 +36,6 @@ export default function LunarayBrand() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
-        
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 w-full text-center">
-          <motion.nav
-            className="flex items-center justify-center gap-2 text-sm text-white/60 mb-8"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/brands" className="hover:text-white transition-colors">Brands</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-white">LUNARAY</span>
-          </motion.nav>
-
-          <motion.h1
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-wide mb-10"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            LUNARAY
-          </motion.h1>
-
-          <motion.div
-            className="flex flex-wrap justify-center gap-4"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <Link href="/installer-locator">
-              <Button size="lg" className="gap-2" data-testid="button-find-installer-lunaray">
-                Find an Installer
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
-                data-testid="button-get-quote-lunaray"
-              >
-                Get a Quote
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
       </section>
 
       <section ref={featuresRef} className="py-20 bg-background">
