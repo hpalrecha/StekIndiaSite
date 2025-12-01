@@ -86,9 +86,12 @@ export interface Solution {
   id: string;
   name: string;
   slug: string;
+  tagline?: string;
   description: string;
   heroImage: string;
   benefits: string[];
+  offerings?: { name: string; description: string }[];
+  products?: { name: string; description: string }[];
   ctaText: string;
 }
 
