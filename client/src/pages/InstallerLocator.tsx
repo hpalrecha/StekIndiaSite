@@ -94,14 +94,19 @@ export default function InstallerLocator() {
                 </div>
               </div>
             )}
-            <div className="w-full h-full overflow-hidden">
+            <div 
+              className="w-full h-full overflow-hidden"
+              style={{ pointerEvents: "auto" }}
+            >
               <iframe
                 src={INSTALLER_LOCATOR_URL}
                 title="STEK Installer Locator"
                 className="w-full border-0"
+                scrolling="no"
                 style={{ 
-                  height: "1600px",
-                  marginTop: "-600px",
+                  height: "1400px",
+                  marginTop: "-550px",
+                  overflow: "hidden",
                 }}
                 onLoad={() => setIframeLoaded(true)}
                 allow="geolocation"
