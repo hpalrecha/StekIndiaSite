@@ -108,7 +108,14 @@ export class MemStorage implements IStorage {
 
     sampleInstallers.forEach((installer) => {
       const id = randomUUID();
-      this.installers.set(id, { ...installer, id });
+      this.installers.set(id, { 
+        ...installer, 
+        id,
+        phone: installer.phone || null,
+        email: installer.email || null,
+        website: installer.website || null,
+        certificationLevel: installer.certificationLevel || null,
+      });
     });
   }
 
@@ -177,9 +184,15 @@ Visit a STEK certified installer to explore our range of window film options.`,
       const id = randomUUID();
       const now = new Date();
       this.blogPosts.set(id, { 
-        ...post, 
         id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
         coverImage: post.coverImage || null,
+        author: post.author || "STEK India",
+        category: post.category || "News",
+        published: post.published ?? false,
         createdAt: now,
         updatedAt: now,
       });
@@ -206,8 +219,12 @@ Visit a STEK certified installer to explore our range of window film options.`,
   async createContactSubmission(contact: InsertContact): Promise<ContactSubmission> {
     const id = randomUUID();
     const submission: ContactSubmission = {
-      ...contact,
       id,
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone || null,
+      subject: contact.subject,
+      message: contact.message,
       createdAt: new Date(),
     };
     this.contacts.set(id, submission);
@@ -232,7 +249,17 @@ Visit a STEK certified installer to explore our range of window film options.`,
 
   async createInstaller(installer: InsertInstaller): Promise<Installer> {
     const id = randomUUID();
-    const newInstaller: Installer = { ...installer, id };
+    const newInstaller: Installer = { 
+      id,
+      name: installer.name,
+      address: installer.address,
+      city: installer.city,
+      state: installer.state,
+      phone: installer.phone || null,
+      email: installer.email || null,
+      website: installer.website || null,
+      certificationLevel: installer.certificationLevel || null,
+    };
     this.installers.set(id, newInstaller);
     return newInstaller;
   }
@@ -257,9 +284,15 @@ Visit a STEK certified installer to explore our range of window film options.`,
     const id = randomUUID();
     const now = new Date();
     const newPost: BlogPost = {
-      ...post,
       id,
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      content: post.content,
       coverImage: post.coverImage || null,
+      author: post.author || "STEK India",
+      category: post.category || "News",
+      published: post.published ?? false,
       createdAt: now,
       updatedAt: now,
     };
