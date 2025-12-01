@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Mail, Phone, Calendar, User, FileText, Plus, Pencil, Trash2, Eye, EyeOff, MessageSquare, Newspaper, LayoutDashboard } from "lucide-react";
+import { Mail, Phone, Calendar, User, FileText, Plus, Pencil, Trash2, Eye, EyeOff, MessageSquare, Newspaper, LayoutDashboard, Lock, LogOut, Upload, Image } from "lucide-react";
 import type { ContactSubmission, BlogPost, InsertBlogPost } from "@shared/schema";
 
 const categories = ["News", "Products", "Education", "Events", "Tips & Tricks"];
@@ -20,6 +20,109 @@ const categories = ["News", "Products", "Education", "Events", "Tips & Tricks"];
 export default function Admin() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  const { data: authData, isLoading: authLoading } = useQuery<{ isAuthenticated: boolean }>({
+    queryKey: ["/api/auth/check"],
+  });
+
+  const isAuthenticated = authData?.isAuthenticated;
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  return <AdminDashboard activeTab={activeTab} setActiveTab={setActiveTab} />;
+}
+
+function LoginPage() {
+  const { toast } = useToast();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast({ title: "Login successful" });
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/check"] });
+      } else {
+        toast({ title: data.error || "Login failed", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Login failed", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-zinc-900 flex items-center justify-center">
+            <Lock className="h-6 w-6 text-white" />
+          </div>
+          <CardTitle className="text-2xl">Admin Login</CardTitle>
+          <CardDescription>Enter your credentials to access the admin portal</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter username"
+                required
+                data-testid="input-username"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+                data-testid="input-password"
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading} data-testid="button-login">
+              {isLoading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) {
+  const { toast } = useToast();
 
   const { data: contacts = [], isLoading: contactsLoading } = useQuery<ContactSubmission[]>({
     queryKey: ["/api/contacts"],
@@ -29,15 +132,34 @@ export default function Admin() {
     queryKey: ["/api/blog/admin"],
   });
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/check"] });
+      toast({ title: "Logged out successfully" });
+    } catch (error) {
+      toast({ title: "Logout failed", variant: "destructive" });
+    }
+  };
+
   const publishedPosts = blogPosts.filter(p => p.published).length;
   const draftPosts = blogPosts.filter(p => !p.published).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-zinc-900 text-white py-6">
-        <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold">Admin Portal</h1>
-          <p className="text-gray-400 text-sm mt-1">Manage your website content</p>
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Admin Portal</h1>
+            <p className="text-gray-400 text-sm mt-1">Manage your website content</p>
+          </div>
+          <Button variant="outline" onClick={handleLogout} className="text-white border-white hover:bg-white hover:text-zinc-900" data-testid="button-logout">
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </div>
 
@@ -99,7 +221,7 @@ function DashboardTab({
           onClick={() => onNavigate("enquiries")}
           data-testid="card-enquiries-summary"
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
             <CardTitle className="text-sm font-medium">Contact Enquiries</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -114,7 +236,7 @@ function DashboardTab({
           onClick={() => onNavigate("blog")}
           data-testid="card-published-posts"
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
             <CardTitle className="text-sm font-medium">Published Posts</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -129,7 +251,7 @@ function DashboardTab({
           onClick={() => onNavigate("blog")}
           data-testid="card-draft-posts"
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
             <CardTitle className="text-sm font-medium">Draft Posts</CardTitle>
             <EyeOff className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -205,12 +327,12 @@ function EnquiriesTab({ contacts, isLoading }: { contacts: ContactSubmission[]; 
                     <User className="h-4 w-4 text-gray-400" />
                     <span className="font-semibold">{contact.name}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-2 flex-wrap">
                     <Mail className="h-3 w-3" />
                     <span>{contact.email}</span>
                     {contact.phone && (
                       <>
-                        <span className="mx-1">•</span>
+                        <span className="mx-1">|</span>
                         <Phone className="h-3 w-3" />
                         <span>{contact.phone}</span>
                       </>
@@ -291,6 +413,8 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<BlogPost | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<InsertBlogPost>({
     title: "",
     slug: "",
@@ -401,6 +525,39 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
     setEditingPost(post);
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append("image", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData((prev) => ({ ...prev, coverImage: data.url }));
+        toast({ title: "Image uploaded successfully" });
+      } else {
+        const error = await res.json();
+        toast({ title: error.error || "Failed to upload image", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Failed to upload image", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   const handleSubmit = () => {
     if (!formData.title || !formData.slug || !formData.excerpt || !formData.content) {
       toast({ title: "Please fill in all required fields", variant: "destructive" });
@@ -450,19 +607,28 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
             <Card key={post.id} data-testid={`card-post-${post.id}`}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold">{post.title}</span>
-                      <Badge variant={post.published ? "default" : "secondary"}>
-                        {post.published ? "Published" : "Draft"}
-                      </Badge>
-                      <Badge variant="outline">{post.category}</Badge>
-                    </div>
-                    <p className="text-gray-600 text-sm line-clamp-2">{post.excerpt}</p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
-                      <span>By {post.author}</span>
-                      <span>•</span>
-                      <span>{post.createdAt && format(new Date(post.createdAt), "MMM d, yyyy")}</span>
+                  <div className="flex gap-4 flex-1 min-w-0">
+                    {post.coverImage && (
+                      <img 
+                        src={post.coverImage} 
+                        alt={post.title}
+                        className="w-16 h-16 object-cover rounded shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-semibold">{post.title}</span>
+                        <Badge variant={post.published ? "default" : "secondary"}>
+                          {post.published ? "Published" : "Draft"}
+                        </Badge>
+                        <Badge variant="outline">{post.category}</Badge>
+                      </div>
+                      <p className="text-gray-600 text-sm line-clamp-2">{post.excerpt}</p>
+                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
+                        <span>By {post.author}</span>
+                        <span>|</span>
+                        <span>{post.createdAt && format(new Date(post.createdAt), "MMM d, yyyy")}</span>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -594,14 +760,55 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="coverImage">Cover Image URL</Label>
-              <Input
-                id="coverImage"
-                value={formData.coverImage || ""}
-                onChange={(e) => setFormData((prev) => ({ ...prev, coverImage: e.target.value }))}
-                placeholder="https://example.com/image.jpg"
-                data-testid="input-post-cover"
-              />
+              <Label>Cover Image</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={formData.coverImage || ""}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, coverImage: e.target.value }))}
+                  placeholder="Image URL or upload an image"
+                  className="flex-1"
+                  data-testid="input-post-cover"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  data-testid="input-file-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  data-testid="button-upload-image"
+                >
+                  {isUploading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              {formData.coverImage && (
+                <div className="mt-2 relative">
+                  <img 
+                    src={formData.coverImage} 
+                    alt="Cover preview"
+                    className="w-full h-32 object-cover rounded border"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    className="absolute top-2 right-2 h-6 w-6"
+                    onClick={() => setFormData((prev) => ({ ...prev, coverImage: "" }))}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 

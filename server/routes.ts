@@ -1,13 +1,93 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import express from "express";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 import { storage } from "./storage";
 import { insertContactSchema, insertBlogPostSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
+
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "stek2024";
+
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, uploadsDir);
+    },
+    filename: (_req, file, cb) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+});
+
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  if (req.session?.isAdmin) {
+    next();
+  } else {
+    res.status(401).json({ error: "Unauthorized" });
+  }
+}
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+
+  app.use("/uploads", (req, res, next) => {
+    res.setHeader("Cache-Control", "public, max-age=31536000");
+    next();
+  }, express.static(uploadsDir));
+
+  app.post("/api/auth/login", (req, res) => {
+    const { username, password } = req.body;
+    
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      req.session.isAdmin = true;
+      return res.json({ success: true, message: "Login successful" });
+    }
+    
+    return res.status(401).json({ error: "Invalid username or password" });
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to logout" });
+      }
+      res.json({ success: true, message: "Logged out successfully" });
+    });
+  });
+
+  app.get("/api/auth/check", (req, res) => {
+    res.json({ isAuthenticated: !!req.session?.isAdmin });
+  });
+
+  app.post("/api/upload", requireAuth, upload.single("image"), (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+    const imageUrl = `/uploads/${req.file.filename}`;
+    return res.json({ url: imageUrl });
+  });
   
   app.post("/api/contact", async (req, res) => {
     try {
@@ -58,7 +138,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/contact/submissions", async (req, res) => {
+  app.get("/api/contact/submissions", requireAuth, async (req, res) => {
     try {
       const submissions = await storage.getContactSubmissions();
       return res.json(submissions);
@@ -70,7 +150,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/contacts", async (req, res) => {
+  app.get("/api/contacts", requireAuth, async (req, res) => {
     try {
       const submissions = await storage.getContactSubmissions();
       return res.json(submissions);
@@ -82,7 +162,7 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/blog/admin", async (req, res) => {
+  app.get("/api/blog/admin", requireAuth, async (req, res) => {
     try {
       const posts = await storage.getBlogPosts(false);
       return res.json(posts);
@@ -117,7 +197,7 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/blog", async (req, res) => {
+  app.post("/api/blog", requireAuth, async (req, res) => {
     try {
       const result = insertBlogPostSchema.safeParse(req.body);
       
@@ -142,7 +222,7 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/blog/:id", async (req, res) => {
+  app.patch("/api/blog/:id", requireAuth, async (req, res) => {
     try {
       const existingPost = await storage.getBlogPostById(req.params.id);
       if (!existingPost) {
@@ -164,7 +244,7 @@ export async function registerRoutes(
     }
   });
 
-  app.delete("/api/blog/:id", async (req, res) => {
+  app.delete("/api/blog/:id", requireAuth, async (req, res) => {
     try {
       const deleted = await storage.deleteBlogPost(req.params.id);
       if (!deleted) {
