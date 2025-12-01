@@ -62,7 +62,7 @@ export default function LunarayBrand() {
           </motion.h1>
           
           <motion.p
-            className="text-lg sm:text-xl text-white/80 tracking-widest uppercase mb-8"
+            className="text-lg sm:text-xl text-white/80 tracking-widest uppercase mb-10"
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -70,20 +70,11 @@ export default function LunarayBrand() {
             STEK Automotive Window Film
           </motion.p>
 
-          <motion.p
-            className="text-lg text-white/70 max-w-2xl mx-auto mb-10"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            More than just a window tint — transform cars into comfortable and refreshing spaces with advanced heat rejection, UV protection, and effortless installation.
-          </motion.p>
-
           <motion.div
             className="flex flex-wrap justify-center gap-4"
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Link href="/installer-locator">
               <Button size="lg" className="gap-2" data-testid="button-find-installer-lunaray">
