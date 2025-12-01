@@ -8,7 +8,7 @@ import { STEK_GLOBAL_URL } from "@/lib/constants";
 
 import installersImage from "@assets/stock_images/professional_auto_de_0dbcaf65.jpg";
 
-const INSTALLER_LOCATOR_URL = `${STEK_GLOBAL_URL}/find-installer`;
+const INSTALLER_LOCATOR_URL = "https://www.stekautomotive.com/find-an-installer";
 
 export default function InstallerLocator() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
