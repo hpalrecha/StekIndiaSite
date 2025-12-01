@@ -3,10 +3,10 @@ import type { NavItem, ProductCategory, Solution } from "@shared/schema";
 export const STEK_GLOBAL_URL = "https://www.stekautomotive.com";
 
 export const EXTERNAL_RESOURCES: NavItem[] = [
-  { label: "Become an Installer", href: `${STEK_GLOBAL_URL}/become-installer`, external: true },
-  { label: "Training Program", href: `${STEK_GLOBAL_URL}/training`, external: true },
-  { label: "Find a Partner", href: `${STEK_GLOBAL_URL}/find-partner`, external: true },
-  { label: "Blog", href: `${STEK_GLOBAL_URL}/blog`, external: true },
+  { label: "Become an Installer", href: `${STEK_GLOBAL_URL}/become-an-installer`, external: true },
+  { label: "Training Program", href: `${STEK_GLOBAL_URL}/training-program`, external: true },
+  { label: "Find a Partner", href: "/installer-locator", external: false },
+  { label: "Blog", href: "/blog", external: false },
 ];
 
 export const BRANDS = [

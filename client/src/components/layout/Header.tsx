@@ -124,17 +124,29 @@ export function Header() {
               {openDropdown === "Resources" && (
                 <div className="absolute top-full left-0 mt-1 min-w-[220px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50">
                   {EXTERNAL_RESOURCES.map((resource) => (
-                    <a
-                      key={resource.href}
-                      href={resource.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                      data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
-                    >
-                      {resource.label}
-                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                    </a>
+                    resource.external ? (
+                      <a
+                        key={resource.href}
+                        href={resource.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
+                        data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
+                      >
+                        {resource.label}
+                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                      </a>
+                    ) : (
+                      <Link
+                        key={resource.href}
+                        href={resource.href}
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
+                        data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
+                      >
+                        {resource.label}
+                      </Link>
+                    )
                   ))}
                 </div>
               )}
@@ -181,17 +193,28 @@ export function Header() {
               {openDropdown === "Resources" && (
                 <div className="pl-4">
                   {EXTERNAL_RESOURCES.map((resource) => (
-                    <a
-                      key={resource.href}
-                      href={resource.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {resource.label}
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
+                    resource.external ? (
+                      <a
+                        key={resource.href}
+                        href={resource.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {resource.label}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : (
+                      <Link
+                        key={resource.href}
+                        href={resource.href}
+                        className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {resource.label}
+                      </Link>
+                    )
                   ))}
                 </div>
               )}
