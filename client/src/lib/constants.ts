@@ -1,6 +1,5 @@
 import type { NavItem, ProductCategory, Solution } from "@shared/schema";
 
-// External STEK Automotive URLs
 export const STEK_GLOBAL_URL = "https://www.stekautomotive.com";
 
 export const EXTERNAL_RESOURCES: NavItem[] = [
@@ -10,9 +9,61 @@ export const EXTERNAL_RESOURCES: NavItem[] = [
   { label: "Blog", href: `${STEK_GLOBAL_URL}/blog`, external: true },
 ];
 
+export const BRANDS = [
+  {
+    id: "lunarray",
+    name: "Lunarray",
+    slug: "lunarray",
+    tagline: "Premium Window Films",
+    description: "Advanced window film technology featuring exceptional heat rejection and UV protection for ultimate comfort and privacy.",
+    features: ["Superior heat rejection", "99% UV protection", "Crystal clarity", "Signal friendly"],
+  },
+  {
+    id: "dyno",
+    name: "DYNO",
+    slug: "dyno",
+    tagline: "Performance Protection Films",
+    description: "High-performance paint protection films with self-healing technology designed for automotive enthusiasts who demand the best.",
+    features: ["Self-healing technology", "10-year warranty", "Hydrophobic coating", "Superior clarity"],
+  },
+  {
+    id: "forceshield",
+    name: "Forceshield",
+    slug: "forceshield",
+    tagline: "Ultimate Surface Protection",
+    description: "Maximum protection paint films engineered for extreme conditions and demanding applications.",
+    features: ["Maximum durability", "Impact resistant", "Chemical resistant", "Professional grade"],
+  },
+  {
+    id: "stek",
+    name: "STEK",
+    slug: "stek",
+    tagline: "Premium Automotive Protection",
+    description: "The flagship STEK brand offering comprehensive automotive protection solutions trusted by professionals worldwide.",
+    features: ["World-class quality", "Certified installer network", "Complete protection", "Global warranty"],
+  },
+  {
+    id: "stek-formula",
+    name: "STEK Formula",
+    slug: "stek-formula",
+    tagline: "Professional Car Care",
+    description: "Complete range of professional-grade car care products specifically formulated to maintain and enhance protected surfaces.",
+    features: ["PPF safe", "pH neutral", "Easy application", "Professional results"],
+  },
+];
+
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Brands", href: "/brands" },
+  {
+    label: "Brand",
+    href: "/brands",
+    children: [
+      { label: "Lunarray", href: "/brands/lunarray" },
+      { label: "DYNO", href: "/brands/dyno" },
+      { label: "Forceshield", href: "/brands/forceshield" },
+      { label: "STEK", href: "/brands/stek" },
+      { label: "STEK Formula", href: "/brands/stek-formula" },
+    ],
+  },
   {
     label: "Solutions",
     href: "/solutions",
@@ -22,19 +73,6 @@ export const NAV_ITEMS: NavItem[] = [
       { label: "Architectural", href: "/solutions/architectural" },
     ],
   },
-  {
-    label: "Products",
-    href: "/products",
-    children: [
-      { label: "Paint Protection Film", href: "/products/paint-protection-film" },
-      { label: "Window Film", href: "/products/window-film" },
-      { label: "Windshield Film", href: "/products/windshield-film" },
-      { label: "Car Care", href: "/products/car-care" },
-    ],
-  },
-  { label: "About", href: "/about" },
-  { label: "Find Installer", href: "/installer-locator" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export const PRODUCT_CATEGORIES: ProductCategory[] = [

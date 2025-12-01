@@ -29,7 +29,7 @@ export function Header() {
         >
           <button
             onClick={() => isMobile && setOpenDropdown(openDropdown === item.label ? null : item.label)}
-            className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors ${
               active
                 ? "text-primary"
                 : isMobile
@@ -47,7 +47,7 @@ export function Header() {
               className={`${
                 isMobile
                   ? "pl-4 space-y-1"
-                  : "absolute top-full left-0 mt-1 min-w-[200px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50"
+                  : "absolute top-full left-0 mt-1 min-w-[220px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50"
               }`}
             >
               {item.children!.map((child) => (
@@ -58,7 +58,7 @@ export function Header() {
                     setMobileMenuOpen(false);
                     setOpenDropdown(null);
                   }}
-                  className={`block px-4 py-2 text-sm transition-colors ${
+                  className={`block px-4 py-2.5 text-sm transition-colors ${
                     isMobile
                       ? "text-muted-foreground hover:text-foreground"
                       : "text-foreground hover:bg-muted hover:text-primary"
@@ -79,7 +79,7 @@ export function Header() {
         key={item.href}
         href={item.href}
         onClick={() => setMobileMenuOpen(false)}
-        className={`px-3 py-2 text-sm font-medium transition-colors ${
+        className={`px-4 py-2 text-sm font-medium transition-colors ${
           active
             ? "text-primary"
             : isMobile
@@ -105,44 +105,53 @@ export function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {NAV_ITEMS.filter(item => item.label !== "Home").map((item) => renderNavItem(item))}
+            {NAV_ITEMS.map((item) => renderNavItem(item))}
             
-            <div className="relative group">
+            <div
+              className="relative group"
+              onMouseEnter={() => setOpenDropdown("Resources")}
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
               <button
-                className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white/90 hover:text-white transition-colors"
+                className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors ${
+                  openDropdown === "Resources" ? "text-white" : "text-white/90 hover:text-white"
+                }`}
                 data-testid="nav-resources"
               >
                 Resources
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === "Resources" ? "rotate-180" : ""}`} />
               </button>
-              <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all absolute top-full left-0 mt-1 min-w-[200px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50">
-                {EXTERNAL_RESOURCES.map((resource) => (
-                  <a
-                    key={resource.href}
-                    href={resource.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                    data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
-                  >
-                    {resource.label}
-                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                  </a>
-                ))}
-              </div>
+              {openDropdown === "Resources" && (
+                <div className="absolute top-full left-0 mt-1 min-w-[220px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50">
+                  {EXTERNAL_RESOURCES.map((resource) => (
+                    <a
+                      key={resource.href}
+                      href={resource.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
+                      data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {resource.label}
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <a
-              href={`${STEK_GLOBAL_URL}/become-installer`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button data-testid="button-become-installer">
-                Become Installer
+            <Link href="/installer-locator">
+              <Button variant="outline" className="text-white border-white/30 bg-transparent hover:bg-white/10" data-testid="button-find-installer-nav">
+                Find Installer
               </Button>
-            </a>
+            </Link>
+            <Link href="/contact">
+              <Button data-testid="button-contact-nav">
+                Contact Us
+              </Button>
+            </Link>
           </div>
 
           <button
@@ -162,35 +171,43 @@ export function Header() {
             {NAV_ITEMS.map((item) => renderNavItem(item, true))}
             
             <div className="mt-2 pt-2 border-t border-border">
-              <p className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <button
+                onClick={() => setOpenDropdown(openDropdown === "Resources" ? null : "Resources")}
+                className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-foreground"
+              >
                 Resources
-              </p>
-              {EXTERNAL_RESOURCES.map((resource) => (
-                <a
-                  key={resource.href}
-                  href={resource.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {resource.label}
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              ))}
+                <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === "Resources" ? "rotate-180" : ""}`} />
+              </button>
+              {openDropdown === "Resources" && (
+                <div className="pl-4">
+                  {EXTERNAL_RESOURCES.map((resource) => (
+                    <a
+                      key={resource.href}
+                      href={resource.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {resource.label}
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div className="mt-4 px-3">
-              <a
-                href={`${STEK_GLOBAL_URL}/become-installer`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block"
-              >
-                <Button className="w-full" data-testid="button-become-installer-mobile">
-                  Become Installer
+            <div className="mt-4 px-3 space-y-3">
+              <Link href="/installer-locator" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full" data-testid="button-find-installer-mobile">
+                  Find Installer
                 </Button>
-              </a>
+              </Link>
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full" data-testid="button-contact-mobile">
+                  Contact Us
+                </Button>
+              </Link>
             </div>
           </nav>
         </div>
