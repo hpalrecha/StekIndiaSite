@@ -11,6 +11,7 @@ import About from "@/pages/About";
 import InstallerLocator from "@/pages/InstallerLocator";
 import Contact from "@/pages/Contact";
 import Brands from "@/pages/Brands";
+import DynoBrand from "@/pages/DynoBrand";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/brands" component={Brands} />
+        <Route path="/brands/dyno" component={DynoBrand} />
         <Route path="/brands/:brand" component={Brands} />
         <Route path="/products" component={Products} />
         <Route path="/products/:category" component={Products} />
