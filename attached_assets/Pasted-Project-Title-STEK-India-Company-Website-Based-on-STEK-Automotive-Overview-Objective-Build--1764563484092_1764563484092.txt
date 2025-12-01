@@ -1,0 +1,81 @@
+Project Title: STEK India — Company Website (Based on STEK Automotive)
+
+Overview / Objective:
+Build a clean, modern, responsive website for “STEK India” that largely replicates the structure, design, and visual feel of the global STEK Automotive website, while applying two specific customizations:
+
+The “Resources” section on all pages should redirect to the original STEK Automotive site (i.e. link out externally).
+
+Under “Solutions”, exclude the “Marine” and “DIY” (or “PPF-DIY Kit”) subsections — the Solutions menu should only contain “Installers”, “Dealerships”, and “Architectural”.
+
+Requirements / Deliverables:
+
+Site Structure & Routing (Sitemap)
+
+Homepage, Brand list page, Solutions pages, Products / Product-Category pages, About page, Installer Locator (for India), Contact/Enquiry page, Footer, etc.
+
+Under “Solutions” navigation: only include Installers, Dealerships, Architectural. (No Marine / DIY).
+
+“Resources” menu or links: whenever present — it should link externally to the corresponding page on STEK Automotive (global site), not duplicate content locally.
+
+Design / Visual Style / Theme
+
+Clean, modern design, similar to STEK Automotive: large full-width hero banners, bold headings over images, card/grid layouts for product categories. 
+STEK Automotive
++1
+
+Color palette: dark / charcoal or black header/navbar background; white for content background; use a deep red / maroon accent for CTA buttons and top-bar elements (matching the “Become Installer” red CTA on original).
+
+Typography: modern sans-serif font(s); headings large and bold; body copy clean, readable. Hierarchy with clear h1/h2/h3 etc.
+
+Responsive design: site must look good on desktop, tablet, and mobile. Use responsive layouts / images.
+
+UI patterns: use card/grid blocks for product lists or categories, hero banners, consistent header + footer, clear navigation, and ample white space.
+
+Content & Copy Setup (Placeholders)
+
+Provide placeholder text/content for all major pages — headline / intro copy on homepage, about page, product category pages. These can be generic now, to be replaced with localized STEK India copy later.
+
+For products / film categories: set up pages / sections for categories like Paint Protection Film (with sub-categories: Transparent, Color, Pattern, Chrome), Window Film, Windshield Film, Car-Care (Formula), just like on original site. 
+STEK Automotive
++1
+
+Installer locator: implement a page / template ready to list Indian installers / partners. (Initially placeholder / empty if installer data not yet available).
+
+Navigation & External Linking (Resources Redirect)
+
+Header / nav bar should include menu items: Brands, Solutions (with 3 sub items), Products (if separate), About, Installer Locator, Contact.
+
+“Resources” menu / link: include as external links only. For example: “Become Installer”, “Training Program”, “Find an Installer / Partner”, “Blog”, “Contact us”. These should point to the global STEK Automotive domain URLs (i.e. not replicated).
+
+For external links: open in new tab (target _blank) to avoid affecting user flow.
+
+Technical / Implementation Details
+
+Use a modern front-end stack — e.g. React + Next.js, or static site generator, or plain HTML/CSS/JS with a CSS framework (Tailwind, Bootstrap, etc.) — whichever is more comfortable.
+
+Use semantic HTML, accessible markup (alt tags, aria where needed), and responsive CSS / layout.
+
+Provide a style-guide or design tokens file (colors, fonts, spacing, button styles), to aid consistency and future updates.
+
+Provide clear documentation / README describing how to add content (new pages, products), how to update external links, and how to build/deploy.
+
+Optional / Future-Ready Features (Phase 2 possibility)
+
+Content Management System (CMS) integration or static-site generator that allows easy addition of blog posts / news / resources (if decided later to host locally).
+
+Dynamic Installer Locator map / database (for listing Indian installers) — but for now, set up template / structure only.
+
+SEO-friendly structure: meta-tags placeholders, semantic page titles, etc.
+
+Styling & UI Reference:
+Use the global STEK Automotive website (stekautomotive.com) as the baseline for design inspiration. Key references: hero banner headers, product category cards, clean white & dark layout, red CTA buttons, bold typography. 
+STEK Automotive
++1
+
+Constraints / What NOT to Include:
+
+Do not include “Marine” or “DIY” sections under Solutions.
+
+Do not replicate full resource content — only redirect to global site.
+
+The site does not need to replicate backend functionality of STEK (e.g. pattern-cut software, shop locator global map) — unless future phase. For now, front-end with placeholders is enough.
