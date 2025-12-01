@@ -70,6 +70,28 @@ export async function registerRoutes(
     }
   });
 
+  app.get("/api/contacts", async (req, res) => {
+    try {
+      const submissions = await storage.getContactSubmissions();
+      return res.json(submissions);
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      return res.status(500).json({ 
+        error: "Failed to fetch contacts" 
+      });
+    }
+  });
+
+  app.get("/api/blog/admin", async (req, res) => {
+    try {
+      const posts = await storage.getBlogPosts(false);
+      return res.json(posts);
+    } catch (error) {
+      console.error("Error fetching all blog posts:", error);
+      return res.status(500).json({ error: "Failed to fetch blog posts" });
+    }
+  });
+
   app.get("/api/blog", async (req, res) => {
     try {
       const { all } = req.query;

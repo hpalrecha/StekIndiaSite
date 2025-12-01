@@ -71,7 +71,16 @@ shared/
 ## Running the Project
 The application runs on port 5000 with `npm run dev`.
 
+## Admin Portal
+Access the admin portal at `/admin` to manage:
+- **Dashboard**: Overview of contact enquiries and blog post stats
+- **Enquiries**: View all contact form submissions with details
+- **Blog**: Create, edit, publish/unpublish, and delete blog posts
+
 ## Recent Changes
+- Added unified Admin Portal (/admin) with dashboard, enquiries, and blog management
+- Created Blog system with CMS capabilities
+- Updated navigation Resources menu with correct external/internal links
 - Initial site build with all pages and components
 - Implemented responsive navigation with dropdown menus
 - Added product categories with subcategories
