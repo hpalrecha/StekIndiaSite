@@ -13,6 +13,8 @@ import Contact from "@/pages/Contact";
 import Brands from "@/pages/Brands";
 import DynoBrand from "@/pages/DynoBrand";
 import LunarayBrand from "@/pages/LunarayBrand";
+import Blog from "@/pages/Blog";
+import BlogAdmin from "@/pages/BlogAdmin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -31,6 +33,9 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/installer-locator" component={InstallerLocator} />
         <Route path="/contact" component={Contact} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/blog/:slug" component={Blog} />
+        <Route path="/blog-admin" component={BlogAdmin} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
