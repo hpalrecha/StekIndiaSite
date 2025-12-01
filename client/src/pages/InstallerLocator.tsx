@@ -81,7 +81,7 @@ export default function InstallerLocator() {
 
           <motion.div
             className="relative w-full rounded-md overflow-hidden border border-border bg-muted"
-            style={{ height: "800px" }}
+            style={{ height: "700px" }}
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -104,8 +104,8 @@ export default function InstallerLocator() {
                 className="w-full border-0"
                 scrolling="no"
                 style={{ 
-                  height: "1400px",
-                  marginTop: "-550px",
+                  height: "1500px",
+                  marginTop: "-750px",
                   overflow: "hidden",
                 }}
                 onLoad={() => setIframeLoaded(true)}
