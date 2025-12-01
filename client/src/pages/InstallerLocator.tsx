@@ -81,29 +81,34 @@ export default function InstallerLocator() {
 
           <motion.div
             className="relative w-full rounded-md overflow-hidden border border-border bg-muted"
-            style={{ minHeight: "700px" }}
+            style={{ height: "800px" }}
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             {!iframeLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-muted">
+              <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-muted-foreground">Loading installer locator...</p>
                 </div>
               </div>
             )}
-            <iframe
-              src={INSTALLER_LOCATOR_URL}
-              title="STEK Installer Locator"
-              className="w-full h-full border-0"
-              style={{ minHeight: "700px" }}
-              onLoad={() => setIframeLoaded(true)}
-              allow="geolocation"
-              loading="lazy"
-              data-testid="iframe-installer-locator"
-            />
+            <div className="w-full h-full overflow-hidden">
+              <iframe
+                src={INSTALLER_LOCATOR_URL}
+                title="STEK Installer Locator"
+                className="w-full border-0"
+                style={{ 
+                  height: "1600px",
+                  marginTop: "-600px",
+                }}
+                onLoad={() => setIframeLoaded(true)}
+                allow="geolocation"
+                loading="lazy"
+                data-testid="iframe-installer-locator"
+              />
+            </div>
           </motion.div>
 
           <motion.p
