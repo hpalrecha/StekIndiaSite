@@ -53,28 +53,19 @@ export default function LunarayBrand() {
           </motion.nav>
 
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-wide mb-4"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-wide mb-10"
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             LUNARAY
           </motion.h1>
-          
-          <motion.p
-            className="text-lg sm:text-xl text-white/80 tracking-widest uppercase mb-10"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            STEK Automotive Window Film
-          </motion.p>
 
           <motion.div
             className="flex flex-wrap justify-center gap-4"
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Link href="/installer-locator">
               <Button size="lg" className="gap-2" data-testid="button-find-installer-lunaray">
