@@ -1,21 +1,36 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { Link } from "wouter";
+import { Home, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardContent className="pt-6">
-          <div className="flex mb-4 gap-2">
-            <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">404 Page Not Found</h1>
-          </div>
-
-          <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
-          </p>
-        </CardContent>
-      </Card>
+    <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="text-center">
+        <h1 className="text-8xl font-bold text-primary mb-4">404</h1>
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          Page Not Found
+        </h2>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+          Sorry, the page you're looking for doesn't exist or has been moved.
+        </p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/">
+            <Button className="gap-2" data-testid="button-go-home">
+              <Home className="h-4 w-4" />
+              Go Home
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            onClick={() => window.history.back()}
+            className="gap-2"
+            data-testid="button-go-back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Go Back
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
