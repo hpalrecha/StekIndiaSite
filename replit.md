@@ -75,7 +75,15 @@ The application runs on port 5000 with `npm run dev`.
 Access the admin portal at `/admin` to manage:
 - **Dashboard**: Overview of contact enquiries and blog post stats
 - **Enquiries**: View all contact form submissions with details
-- **Blog**: Create, edit, publish/unpublish, and delete blog posts
+- **Blog**: Create, edit, publish/unpublish, and delete blog posts with image upload
+
+### Admin Login Credentials
+- **Username**: admin
+- **Password**: stek2024
+
+You can customize these by setting environment variables:
+- `ADMIN_USERNAME` - Custom admin username
+- `ADMIN_PASSWORD` - Custom admin password
 
 ## Recent Changes
 - Added unified Admin Portal (/admin) with dashboard, enquiries, and blog management
