@@ -244,7 +244,7 @@ export default function Brands() {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {BRANDS.filter((b) => b.slug !== brandSlug).map((b) => (
-                <Link key={b.slug} href={b.slug === 'dyno' ? '/brands/dyno' : `/brands/${b.slug}`}>
+                <Link key={b.slug} href={b.slug === 'dyno' ? '/brands/dyno' : b.slug === 'lunarray' ? '/brands/lunarray' : `/brands/${b.slug}`}>
                   <Card className="hover-elevate active-elevate-2 transition-all duration-300 h-full">
                     <CardContent className="p-4 text-center">
                       <h3 className="font-semibold text-foreground">{b.name}</h3>
@@ -328,7 +328,7 @@ export default function Brands() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Link
-                  href={brand.slug === 'dyno' ? '/brands/dyno' : `/brands/${brand.slug}`}
+                  href={brand.slug === 'dyno' ? '/brands/dyno' : brand.slug === 'lunarray' ? '/brands/lunarray' : `/brands/${brand.slug}`}
                   className="group block"
                 >
                   <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 group-hover:scale-[1.02]">
