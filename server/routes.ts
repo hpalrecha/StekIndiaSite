@@ -5,7 +5,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
-import { insertContactSchema, insertBlogPostSchema } from "@shared/schema";
+import { insertContactSchema, insertBlogPostSchema, insertProductSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
@@ -254,6 +254,108 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting blog post:", error);
       return res.status(500).json({ error: "Failed to delete blog post" });
+    }
+  });
+
+  // Product routes
+  app.get("/api/products", async (req, res) => {
+    try {
+      const products = await storage.getProducts(true);
+      return res.json(products);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/admin", requireAuth, async (req, res) => {
+    try {
+      const products = await storage.getProducts(false);
+      return res.json(products);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/brand/:brand", async (req, res) => {
+    try {
+      const products = await storage.getProductsByBrand(req.params.brand, true);
+      return res.json(products);
+    } catch (error) {
+      console.error("Error fetching products by brand:", error);
+      return res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/category/:category", async (req, res) => {
+    try {
+      const products = await storage.getProductsByCategory(req.params.category, true);
+      return res.json(products);
+    } catch (error) {
+      console.error("Error fetching products by category:", error);
+      return res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/:slug", async (req, res) => {
+    try {
+      const product = await storage.getProductBySlug(req.params.slug);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      return res.json(product);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      return res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
+
+  app.post("/api/products", requireAuth, async (req, res) => {
+    try {
+      const result = insertProductSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        const validationError = fromZodError(result.error);
+        return res.status(400).json({ 
+          error: "Validation failed", 
+          details: validationError.message 
+        });
+      }
+
+      const product = await storage.createProduct(result.data);
+      return res.status(201).json(product);
+    } catch (error) {
+      console.error("Error creating product:", error);
+      return res.status(500).json({ error: "Failed to create product" });
+    }
+  });
+
+  app.patch("/api/products/:id", requireAuth, async (req, res) => {
+    try {
+      const existing = await storage.getProductById(req.params.id);
+      if (!existing) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      const product = await storage.updateProduct(req.params.id, req.body);
+      return res.json(product);
+    } catch (error) {
+      console.error("Error updating product:", error);
+      return res.status(500).json({ error: "Failed to update product" });
+    }
+  });
+
+  app.delete("/api/products/:id", requireAuth, async (req, res) => {
+    try {
+      const deleted = await storage.deleteProduct(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      return res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      return res.status(500).json({ error: "Failed to delete product" });
     }
   });
 

@@ -91,6 +91,40 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type BlogPost = typeof blogPosts.$inferSelect;
 
+// Products (managed via admin)
+export const products = pgTable("products", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description").notNull(),
+  shortDescription: text("short_description"),
+  coverImage: text("cover_image"),
+  brand: text("brand").notNull(), // Lunarray, DYNO, Forceshield, STEK, STEK Formula
+  category: text("category").notNull(), // Paint Protection Film, Window Film, Windshield Film, Car Care
+  subcategory: text("subcategory"), // For PPF: DYNO Shield, DYNO Matte, etc.
+  features: text("features").array(), // Array of feature strings
+  specifications: text("specifications"), // JSON string for specs
+  published: boolean("published").notNull().default(false),
+  displayOrder: text("display_order").default("0"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertProductSchema = createInsertSchema(products).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  slug: z.string().min(2, "Slug must be at least 2 characters").regex(/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  brand: z.string().min(1, "Brand is required"),
+  category: z.string().min(1, "Category is required"),
+});
+
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type Product = typeof products.$inferSelect;
+
 // Product categories
 export interface ProductCategory {
   id: string;

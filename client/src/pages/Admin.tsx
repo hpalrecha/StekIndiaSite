@@ -12,13 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Mail, Phone, Calendar, User, FileText, Plus, Pencil, Trash2, Eye, EyeOff, MessageSquare, Newspaper, LayoutDashboard, Lock, LogOut, Upload, Image } from "lucide-react";
-import type { ContactSubmission, BlogPost, InsertBlogPost } from "@shared/schema";
+import { Mail, Phone, Calendar, User, FileText, Plus, Pencil, Trash2, Eye, EyeOff, MessageSquare, Newspaper, LayoutDashboard, Lock, LogOut, Upload, Package } from "lucide-react";
+import type { ContactSubmission, BlogPost, InsertBlogPost, Product, InsertProduct } from "@shared/schema";
 
-const categories = ["News", "Products", "Education", "Events", "Tips & Tricks"];
+const blogCategories = ["News", "Products", "Education", "Events", "Tips & Tricks"];
+const brands = ["DYNO", "Lunarray", "Forceshield", "STEK", "STEK Formula"];
+const productCategories = ["Paint Protection Film", "Window Film", "Windshield Film", "Car Care"];
 
 export default function Admin() {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const { data: authData, isLoading: authLoading } = useQuery<{ isAuthenticated: boolean }>({
@@ -132,6 +133,10 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
     queryKey: ["/api/blog/admin"],
   });
 
+  const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
+    queryKey: ["/api/products/admin"],
+  });
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -147,6 +152,7 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
 
   const publishedPosts = blogPosts.filter(p => p.published).length;
   const draftPosts = blogPosts.filter(p => !p.published).length;
+  const publishedProducts = products.filter(p => p.published).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -165,7 +171,7 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsList className="grid w-full grid-cols-4 max-w-lg">
             <TabsTrigger value="dashboard" className="flex items-center gap-2" data-testid="tab-dashboard">
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
@@ -173,6 +179,10 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
             <TabsTrigger value="enquiries" className="flex items-center gap-2" data-testid="tab-enquiries">
               <MessageSquare className="h-4 w-4" />
               Enquiries
+            </TabsTrigger>
+            <TabsTrigger value="products" className="flex items-center gap-2" data-testid="tab-products">
+              <Package className="h-4 w-4" />
+              Products
             </TabsTrigger>
             <TabsTrigger value="blog" className="flex items-center gap-2" data-testid="tab-blog">
               <Newspaper className="h-4 w-4" />
@@ -185,12 +195,17 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
               contactsCount={contacts.length} 
               publishedPosts={publishedPosts}
               draftPosts={draftPosts}
+              productsCount={publishedProducts}
               onNavigate={setActiveTab}
             />
           </TabsContent>
 
           <TabsContent value="enquiries">
             <EnquiriesTab contacts={contacts} isLoading={contactsLoading} />
+          </TabsContent>
+
+          <TabsContent value="products">
+            <ProductsTab products={products} isLoading={productsLoading} />
           </TabsContent>
 
           <TabsContent value="blog">
@@ -206,16 +221,18 @@ function DashboardTab({
   contactsCount, 
   publishedPosts, 
   draftPosts,
+  productsCount,
   onNavigate 
 }: { 
   contactsCount: number; 
   publishedPosts: number;
   draftPosts: number;
+  productsCount: number;
   onNavigate: (tab: string) => void;
 }) {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card 
           className="cursor-pointer hover-elevate" 
           onClick={() => onNavigate("enquiries")}
@@ -228,6 +245,21 @@ function DashboardTab({
           <CardContent>
             <div className="text-2xl font-bold">{contactsCount}</div>
             <p className="text-xs text-muted-foreground">Total submissions</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="cursor-pointer hover-elevate" 
+          onClick={() => onNavigate("products")}
+          data-testid="card-products-summary"
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
+            <CardTitle className="text-sm font-medium">Products</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{productsCount}</div>
+            <p className="text-xs text-muted-foreground">Published products</p>
           </CardContent>
         </Card>
 
@@ -271,6 +303,10 @@ function DashboardTab({
           <Button onClick={() => onNavigate("enquiries")} variant="outline" data-testid="button-view-enquiries">
             <MessageSquare className="h-4 w-4 mr-2" />
             View Enquiries
+          </Button>
+          <Button onClick={() => onNavigate("products")} variant="outline" data-testid="button-manage-products">
+            <Package className="h-4 w-4 mr-2" />
+            Manage Products
           </Button>
           <Button onClick={() => onNavigate("blog")} variant="outline" data-testid="button-manage-blog">
             <Newspaper className="h-4 w-4 mr-2" />
@@ -402,6 +438,531 @@ function EnquiriesTab({ contacts, isLoading }: { contacts: ContactSubmission[]; 
               </DialogFooter>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function ProductsTab({ products, isLoading }: { products: Product[]; isLoading: boolean }) {
+  const { toast } = useToast();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<Product | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [filterBrand, setFilterBrand] = useState<string>("all");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState<InsertProduct>({
+    name: "",
+    slug: "",
+    description: "",
+    shortDescription: "",
+    coverImage: "",
+    brand: "DYNO",
+    category: "Paint Protection Film",
+    subcategory: "",
+    features: [],
+    specifications: "",
+    published: false,
+    displayOrder: "0",
+  });
+  const [featuresText, setFeaturesText] = useState("");
+
+  const createMutation = useMutation({
+    mutationFn: async (data: InsertProduct) => {
+      return apiRequest("POST", "/api/products", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      setIsCreateOpen(false);
+      resetForm();
+      toast({ title: "Product created successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to create product", variant: "destructive" });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertProduct> }) => {
+      return apiRequest("PATCH", `/api/products/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      setEditingProduct(null);
+      resetForm();
+      toast({ title: "Product updated successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to update product", variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest("DELETE", `/api/products/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      setDeleteConfirm(null);
+      toast({ title: "Product deleted successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete product", variant: "destructive" });
+    },
+  });
+
+  const togglePublishMutation = useMutation({
+    mutationFn: async ({ id, published }: { id: string; published: boolean }) => {
+      return apiRequest("PATCH", `/api/products/${id}`, { published });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      slug: "",
+      description: "",
+      shortDescription: "",
+      coverImage: "",
+      brand: "DYNO",
+      category: "Paint Protection Film",
+      subcategory: "",
+      features: [],
+      specifications: "",
+      published: false,
+      displayOrder: "0",
+    });
+    setFeaturesText("");
+  };
+
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
+
+  const handleNameChange = (name: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      name,
+      slug: generateSlug(name),
+    }));
+  };
+
+  const openEdit = (product: Product) => {
+    setFormData({
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      shortDescription: product.shortDescription || "",
+      coverImage: product.coverImage || "",
+      brand: product.brand,
+      category: product.category,
+      subcategory: product.subcategory || "",
+      features: product.features || [],
+      specifications: product.specifications || "",
+      published: product.published,
+      displayOrder: product.displayOrder || "0",
+    });
+    setFeaturesText((product.features || []).join("\n"));
+    setEditingProduct(product);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append("image", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setFormData((prev) => ({ ...prev, coverImage: data.url }));
+        toast({ title: "Image uploaded successfully" });
+      } else {
+        const error = await res.json();
+        toast({ title: error.error || "Failed to upload image", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Failed to upload image", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.slug || !formData.description || !formData.brand || !formData.category) {
+      toast({ title: "Please fill in all required fields", variant: "destructive" });
+      return;
+    }
+
+    const features = featuresText.split("\n").filter(f => f.trim());
+    const dataToSubmit = { ...formData, features };
+
+    if (editingProduct) {
+      updateMutation.mutate({ id: editingProduct.id, data: dataToSubmit });
+    } else {
+      createMutation.mutate(dataToSubmit);
+    }
+  };
+
+  const filteredProducts = filterBrand === "all" 
+    ? products 
+    : products.filter(p => p.brand === filterBrand);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <h2 className="text-xl font-semibold">Products</h2>
+        <div className="flex items-center gap-3">
+          <Select value={filterBrand} onValueChange={setFilterBrand}>
+            <SelectTrigger className="w-40" data-testid="select-filter-brand">
+              <SelectValue placeholder="Filter by brand" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Brands</SelectItem>
+              {brands.map((brand) => (
+                <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button onClick={() => setIsCreateOpen(true)} data-testid="button-create-product">
+            <Plus className="h-4 w-4 mr-2" />
+            New Product
+          </Button>
+        </div>
+      </div>
+
+      {filteredProducts.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <Package className="h-12 w-12 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900">No Products Yet</h3>
+            <p className="text-gray-500 mt-1">Create your first product to get started.</p>
+            <Button className="mt-4" onClick={() => setIsCreateOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Product
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {filteredProducts.map((product) => (
+            <Card key={product.id} data-testid={`card-product-${product.id}`}>
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex gap-4 flex-1 min-w-0">
+                    {product.coverImage && (
+                      <img 
+                        src={product.coverImage} 
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-semibold">{product.name}</span>
+                        <Badge variant={product.published ? "default" : "secondary"}>
+                          {product.published ? "Published" : "Draft"}
+                        </Badge>
+                        <Badge variant="outline">{product.brand}</Badge>
+                        <Badge variant="outline">{product.category}</Badge>
+                      </div>
+                      <p className="text-gray-600 text-sm line-clamp-2">{product.shortDescription || product.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => togglePublishMutation.mutate({ id: product.id, published: !product.published })}
+                      title={product.published ? "Unpublish" : "Publish"}
+                      data-testid={`button-toggle-publish-${product.id}`}
+                    >
+                      {product.published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => openEdit(product)}
+                      data-testid={`button-edit-product-${product.id}`}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setDeleteConfirm(product)}
+                      data-testid={`button-delete-product-${product.id}`}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={isCreateOpen || !!editingProduct} onOpenChange={(open) => {
+        if (!open) {
+          setIsCreateOpen(false);
+          setEditingProduct(null);
+          resetForm();
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingProduct ? "Edit Product" : "Create New Product"}</DialogTitle>
+            <DialogDescription>
+              {editingProduct ? "Update your product details." : "Fill in the details for your new product."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name *</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder="Enter product name"
+                  data-testid="input-product-name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug *</Label>
+                <Input
+                  id="slug"
+                  value={formData.slug}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                  placeholder="product-url-slug"
+                  data-testid="input-product-slug"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand *</Label>
+                <Select
+                  value={formData.brand}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, brand: value }))}
+                >
+                  <SelectTrigger data-testid="select-product-brand">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger data-testid="select-product-category">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {productCategories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subcategory">Subcategory</Label>
+              <Input
+                id="subcategory"
+                value={formData.subcategory || ""}
+                onChange={(e) => setFormData((prev) => ({ ...prev, subcategory: e.target.value }))}
+                placeholder="e.g., Clear PPF, Matte PPF"
+                data-testid="input-product-subcategory"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="shortDescription">Short Description</Label>
+              <Input
+                id="shortDescription"
+                value={formData.shortDescription || ""}
+                onChange={(e) => setFormData((prev) => ({ ...prev, shortDescription: e.target.value }))}
+                placeholder="Brief product tagline"
+                data-testid="input-product-short-desc"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                placeholder="Full product description..."
+                rows={4}
+                data-testid="input-product-description"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="features">Features (one per line)</Label>
+              <Textarea
+                id="features"
+                value={featuresText}
+                onChange={(e) => setFeaturesText(e.target.value)}
+                placeholder="Self-healing technology&#10;10-year warranty&#10;Hydrophobic coating"
+                rows={4}
+                data-testid="input-product-features"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="displayOrder">Display Order</Label>
+                <Input
+                  id="displayOrder"
+                  type="number"
+                  value={formData.displayOrder || "0"}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, displayOrder: e.target.value }))}
+                  placeholder="0"
+                  data-testid="input-product-order"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Cover Image</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={formData.coverImage || ""}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, coverImage: e.target.value }))}
+                  placeholder="Image URL or upload an image"
+                  className="flex-1"
+                  data-testid="input-product-cover"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  data-testid="input-product-file-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  data-testid="button-upload-product-image"
+                >
+                  {isUploading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              {formData.coverImage && (
+                <div className="mt-2 relative">
+                  <img 
+                    src={formData.coverImage} 
+                    alt="Cover preview"
+                    className="w-full h-32 object-cover rounded border"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    className="absolute top-2 right-2 h-6 w-6"
+                    onClick={() => setFormData((prev) => ({ ...prev, coverImage: "" }))}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsCreateOpen(false);
+                setEditingProduct(null);
+                resetForm();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={createMutation.isPending || updateMutation.isPending}
+              data-testid="button-save-product"
+            >
+              {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save Product"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Product</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{deleteConfirm?.name}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteConfirm(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => deleteConfirm && deleteMutation.mutate(deleteConfirm.id)}
+              disabled={deleteMutation.isPending}
+              data-testid="button-confirm-delete-product"
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
@@ -749,7 +1310,7 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
+                    {blogCategories.map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
                       </SelectItem>

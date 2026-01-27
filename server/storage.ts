@@ -7,6 +7,8 @@ import {
   type InsertInstaller,
   type BlogPost,
   type InsertBlogPost,
+  type Product,
+  type InsertProduct,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -28,6 +30,15 @@ export interface IStorage {
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
   updateBlogPost(id: string, post: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
   deleteBlogPost(id: string): Promise<boolean>;
+
+  getProducts(publishedOnly?: boolean): Promise<Product[]>;
+  getProductsByBrand(brand: string, publishedOnly?: boolean): Promise<Product[]>;
+  getProductsByCategory(category: string, publishedOnly?: boolean): Promise<Product[]>;
+  getProductBySlug(slug: string): Promise<Product | undefined>;
+  getProductById(id: string): Promise<Product | undefined>;
+  createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  deleteProduct(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -35,15 +46,18 @@ export class MemStorage implements IStorage {
   private contacts: Map<string, ContactSubmission>;
   private installers: Map<string, Installer>;
   private blogPosts: Map<string, BlogPost>;
+  private products: Map<string, Product>;
 
   constructor() {
     this.users = new Map();
     this.contacts = new Map();
     this.installers = new Map();
     this.blogPosts = new Map();
+    this.products = new Map();
     
     this.seedInstallers();
     this.seedBlogPosts();
+    this.seedProducts();
   }
 
   private seedInstallers() {
@@ -316,6 +330,181 @@ Visit a STEK certified installer to explore our range of window film options.`,
 
   async deleteBlogPost(id: string): Promise<boolean> {
     return this.blogPosts.delete(id);
+  }
+
+  private seedProducts() {
+    const sampleProducts: InsertProduct[] = [
+      {
+        name: "DYNO Shield",
+        slug: "dyno-shield",
+        description: "DYNO Shield is the ultimate paint protection film featuring advanced self-healing technology and superior optical clarity. Designed for automotive enthusiasts who demand the best protection for their vehicles.",
+        shortDescription: "Premium self-healing paint protection film",
+        coverImage: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800",
+        brand: "DYNO",
+        category: "Paint Protection Film",
+        subcategory: "Clear PPF",
+        features: ["Self-healing technology", "10-year warranty", "Hydrophobic coating", "Optical clarity", "Stone chip protection"],
+        published: true,
+        displayOrder: "1",
+      },
+      {
+        name: "DYNO Matte",
+        slug: "dyno-matte",
+        description: "DYNO Matte delivers a stunning satin finish while providing top-tier paint protection. Transform your vehicle's appearance with a sophisticated matte look that also protects.",
+        shortDescription: "Satin finish paint protection film",
+        coverImage: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800",
+        brand: "DYNO",
+        category: "Paint Protection Film",
+        subcategory: "Matte PPF",
+        features: ["Satin matte finish", "Self-healing", "10-year warranty", "UV protection", "No wax required"],
+        published: true,
+        displayOrder: "2",
+      },
+      {
+        name: "LUNARAY Ceramic IR",
+        slug: "lunaray-ceramic-ir",
+        description: "LUNARAY Ceramic IR window film combines advanced nano-ceramic technology with superior heat rejection. Stay cool and protected with up to 99% UV rejection.",
+        shortDescription: "Premium ceramic window tint",
+        coverImage: "https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800",
+        brand: "Lunarray",
+        category: "Window Film",
+        subcategory: "Ceramic",
+        features: ["99% UV rejection", "Superior heat rejection", "Signal friendly", "Optical clarity", "Lifetime warranty"],
+        published: true,
+        displayOrder: "1",
+      },
+      {
+        name: "Forceshield Pro",
+        slug: "forceshield-pro",
+        description: "Forceshield Pro offers commercial-grade paint protection at an accessible price point. Ideal for daily drivers and fleet vehicles requiring reliable protection.",
+        shortDescription: "Commercial-grade PPF solution",
+        coverImage: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800",
+        brand: "Forceshield",
+        category: "Paint Protection Film",
+        subcategory: "Standard PPF",
+        features: ["5-year warranty", "Scratch resistance", "Easy installation", "Cost effective", "Fleet ready"],
+        published: true,
+        displayOrder: "1",
+      },
+      {
+        name: "STEK WindShield Guard",
+        slug: "stek-windshield-guard",
+        description: "STEK WindShield Guard provides invisible protection for your windshield against rock chips, cracks, and road debris. Crystal clear clarity with ultimate protection.",
+        shortDescription: "Windshield protection film",
+        coverImage: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800",
+        brand: "STEK",
+        category: "Windshield Film",
+        subcategory: "Clear",
+        features: ["Impact resistance", "Anti-glare", "Easy to clean", "Optical clarity", "3-year warranty"],
+        published: true,
+        displayOrder: "1",
+      },
+      {
+        name: "STEK Formula Coating",
+        slug: "stek-formula-coating",
+        description: "STEK Formula is a professional-grade ceramic coating that provides long-lasting protection and shine. The perfect complement to paint protection film.",
+        shortDescription: "Professional ceramic coating",
+        coverImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800",
+        brand: "STEK Formula",
+        category: "Car Care",
+        subcategory: "Coatings",
+        features: ["Hydrophobic", "UV protection", "Scratch resistance", "Chemical resistance", "2-year durability"],
+        published: true,
+        displayOrder: "1",
+      },
+    ];
+
+    sampleProducts.forEach((product) => {
+      const id = randomUUID();
+      const now = new Date();
+      this.products.set(id, {
+        id,
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        shortDescription: product.shortDescription || null,
+        coverImage: product.coverImage || null,
+        brand: product.brand,
+        category: product.category,
+        subcategory: product.subcategory || null,
+        features: product.features || null,
+        specifications: product.specifications || null,
+        published: product.published ?? false,
+        displayOrder: product.displayOrder || "0",
+        createdAt: now,
+        updatedAt: now,
+      });
+    });
+  }
+
+  async getProducts(publishedOnly = false): Promise<Product[]> {
+    const products = Array.from(this.products.values());
+    const filtered = publishedOnly ? products.filter((p) => p.published) : products;
+    return filtered.sort((a, b) => {
+      const orderA = parseInt(a.displayOrder || "0");
+      const orderB = parseInt(b.displayOrder || "0");
+      return orderA - orderB;
+    });
+  }
+
+  async getProductsByBrand(brand: string, publishedOnly = false): Promise<Product[]> {
+    const products = await this.getProducts(publishedOnly);
+    return products.filter((p) => p.brand.toLowerCase() === brand.toLowerCase());
+  }
+
+  async getProductsByCategory(category: string, publishedOnly = false): Promise<Product[]> {
+    const products = await this.getProducts(publishedOnly);
+    return products.filter((p) => p.category.toLowerCase() === category.toLowerCase());
+  }
+
+  async getProductBySlug(slug: string): Promise<Product | undefined> {
+    return Array.from(this.products.values()).find((p) => p.slug === slug);
+  }
+
+  async getProductById(id: string): Promise<Product | undefined> {
+    return this.products.get(id);
+  }
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const id = randomUUID();
+    const now = new Date();
+    const newProduct: Product = {
+      id,
+      name: product.name,
+      slug: product.slug,
+      description: product.description,
+      shortDescription: product.shortDescription || null,
+      coverImage: product.coverImage || null,
+      brand: product.brand,
+      category: product.category,
+      subcategory: product.subcategory || null,
+      features: product.features || null,
+      specifications: product.specifications || null,
+      published: product.published ?? false,
+      displayOrder: product.displayOrder || "0",
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.products.set(id, newProduct);
+    return newProduct;
+  }
+
+  async updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    const existing = this.products.get(id);
+    if (!existing) return undefined;
+    
+    const updated: Product = {
+      ...existing,
+      ...product,
+      id,
+      updatedAt: new Date(),
+    };
+    this.products.set(id, updated);
+    return updated;
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    return this.products.delete(id);
   }
 }
 
