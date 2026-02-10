@@ -4,7 +4,8 @@ import { ArrowRight, Shield, Award, Users, Sparkles, CheckCircle } from "lucide-
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AnimatedHero, ProductCard, ProductGrid, FeatureCard } from "@/components/ui/animated-card";
+import { ProductCard, ProductGrid, FeatureCard } from "@/components/ui/animated-card";
+import { HeroSlider } from "@/components/ui/hero-slider";
 import { PRODUCT_CATEGORIES, SOLUTIONS, STEK_GLOBAL_URL } from "@/lib/constants";
 
 import heroImage from "@assets/stock_images/luxury_car_paint_pro_303b9fb8.jpg";
@@ -66,30 +67,68 @@ export default function Home() {
 
   return (
     <div>
-      <AnimatedHero
-        backgroundImage={heroImage}
-        title="Premium Protection for Your Vehicle"
-        description="STEK India offers world-class paint protection films and window tinting solutions. Protect your investment with industry-leading technology and certified installation."
-      >
-        <div className="flex flex-wrap gap-4">
-          <Link href="/products/paint-protection-film">
-            <Button size="lg" className="gap-2" data-testid="button-explore-products">
-              Explore Products
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/installer-locator">
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
-              data-testid="button-find-installer"
-            >
-              Find an Installer
-            </Button>
-          </Link>
-        </div>
-      </AnimatedHero>
+      <HeroSlider
+        slides={[
+          {
+            image: heroImage,
+            subtitle: "Premium Protection",
+            title: "Premium Protection for Your Vehicle",
+            description: "STEK India offers world-class paint protection films and window tinting solutions. Protect your investment with industry-leading technology and certified installation.",
+            cta: (
+              <div className="flex flex-wrap gap-4">
+                <Link href="/products/paint-protection-film">
+                  <Button size="lg" className="gap-2" data-testid="button-explore-products">
+                    Explore Products
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/installer-locator">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                    data-testid="button-find-installer"
+                  >
+                    Find an Installer
+                  </Button>
+                </Link>
+              </div>
+            )
+          },
+          {
+            image: ppfImage,
+            subtitle: "Advanced Technology",
+            title: "Self-Healing Paint Protection",
+            description: "Keep your car looking new with our advanced self-healing paint protection films. Say goodbye to scratches and rock chips.",
+            cta: (
+              <div className="flex flex-wrap gap-4 pt-8">
+                <Link href="/products/paint-protection-film">
+                  <Button size="lg" className="gap-2">
+                    Discover PPF
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            )
+          },
+          {
+            image: windowImage,
+            subtitle: "Comfort & Privacy",
+            title: "Premium Window Tinting",
+            description: "Experience superior heat rejection and UV protection with our range of ceramic window films.",
+            cta: (
+              <div className="flex flex-wrap gap-4 pt-8">
+                <Link href="/products/window-film">
+                  <Button size="lg" className="gap-2">
+                    View Window Films
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            )
+          }
+        ]}
+      />
 
       <section className="py-20 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -248,7 +287,7 @@ export default function Home() {
           style={{ backgroundImage: `url(${installersImage})` }}
         />
         <div className="absolute inset-0 bg-black/70" />
-        
+
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             className="max-w-2xl mx-auto text-center"

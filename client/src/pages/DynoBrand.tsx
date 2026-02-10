@@ -186,7 +186,7 @@ export default function DynoBrand() {
               Why Choose DYNO?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              As the market leader, DYNO doesn't follow trends — we define them. 
+              As the market leader, DYNO doesn't follow trends — we define them.
               Our innovative technology preserves the elegance and performance of your vehicle.
             </p>
           </motion.div>
@@ -289,7 +289,7 @@ export default function DynoBrand() {
               Experience DYNO Excellence
             </h2>
             <p className="text-white/70 mb-8">
-              By choosing DYNO, you're not only protecting your vehicle — you're joining an exclusive community 
+              By choosing DYNO, you're not only protecting your vehicle — you're joining an exclusive community
               that values quality, innovation, and distinction. Contact us today to learn more.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
