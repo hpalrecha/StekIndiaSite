@@ -5,7 +5,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { storage } from "./storage";
-import { insertContactSchema, insertBlogPostSchema, insertProductSchema } from "@shared/schema";
+import { insertContactSchema, insertBlogPostSchema, insertProductSchema, insertTrainingProgramSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
@@ -59,12 +59,12 @@ export async function registerRoutes(
 
   app.post("/api/auth/login", (req, res) => {
     const { username, password } = req.body;
-    
+
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       req.session.isAdmin = true;
       return res.json({ success: true, message: "Login successful" });
     }
-    
+
     return res.status(401).json({ error: "Invalid username or password" });
   });
 
@@ -88,32 +88,32 @@ export async function registerRoutes(
     const imageUrl = `/uploads/${req.file.filename}`;
     return res.json({ url: imageUrl });
   });
-  
+
   app.post("/api/contact", async (req, res) => {
     try {
       const result = insertContactSchema.safeParse(req.body);
-      
+
       if (!result.success) {
         const validationError = fromZodError(result.error);
-        return res.status(400).json({ 
-          error: "Validation failed", 
-          details: validationError.message 
+        return res.status(400).json({
+          error: "Validation failed",
+          details: validationError.message
         });
       }
 
       const submission = await storage.createContactSubmission(result.data);
-      
+
       console.log("New contact submission:", submission);
-      
-      return res.status(201).json({ 
-        success: true, 
+
+      return res.status(201).json({
+        success: true,
         message: "Contact submission received",
-        id: submission.id 
+        id: submission.id
       });
     } catch (error) {
       console.error("Error processing contact submission:", error);
-      return res.status(500).json({ 
-        error: "Failed to process contact submission" 
+      return res.status(500).json({
+        error: "Failed to process contact submission"
       });
     }
   });
@@ -121,19 +121,19 @@ export async function registerRoutes(
   app.get("/api/installers", async (req, res) => {
     try {
       const { state } = req.query;
-      
+
       let installers;
       if (state && typeof state === "string") {
         installers = await storage.getInstallersByState(state);
       } else {
         installers = await storage.getInstallers();
       }
-      
+
       return res.json(installers);
     } catch (error) {
       console.error("Error fetching installers:", error);
-      return res.status(500).json({ 
-        error: "Failed to fetch installers" 
+      return res.status(500).json({
+        error: "Failed to fetch installers"
       });
     }
   });
@@ -144,8 +144,8 @@ export async function registerRoutes(
       return res.json(submissions);
     } catch (error) {
       console.error("Error fetching contact submissions:", error);
-      return res.status(500).json({ 
-        error: "Failed to fetch contact submissions" 
+      return res.status(500).json({
+        error: "Failed to fetch contact submissions"
       });
     }
   });
@@ -156,8 +156,8 @@ export async function registerRoutes(
       return res.json(submissions);
     } catch (error) {
       console.error("Error fetching contacts:", error);
-      return res.status(500).json({ 
-        error: "Failed to fetch contacts" 
+      return res.status(500).json({
+        error: "Failed to fetch contacts"
       });
     }
   });
@@ -200,12 +200,12 @@ export async function registerRoutes(
   app.post("/api/blog", requireAuth, async (req, res) => {
     try {
       const result = insertBlogPostSchema.safeParse(req.body);
-      
+
       if (!result.success) {
         const validationError = fromZodError(result.error);
-        return res.status(400).json({ 
-          error: "Validation failed", 
-          details: validationError.message 
+        return res.status(400).json({
+          error: "Validation failed",
+          details: validationError.message
         });
       }
 
@@ -314,12 +314,12 @@ export async function registerRoutes(
   app.post("/api/products", requireAuth, async (req, res) => {
     try {
       const result = insertProductSchema.safeParse(req.body);
-      
+
       if (!result.success) {
         const validationError = fromZodError(result.error);
-        return res.status(400).json({ 
-          error: "Validation failed", 
-          details: validationError.message 
+        return res.status(400).json({
+          error: "Validation failed",
+          details: validationError.message
         });
       }
 
@@ -356,6 +356,62 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Error deleting product:", error);
       return res.status(500).json({ error: "Failed to delete product" });
+    }
+  });
+
+
+
+  // Training Program routes
+  app.get("/api/training-programs", async (req, res) => {
+    try {
+      const programs = await storage.getTrainingPrograms(true);
+      return res.json(programs);
+    } catch (error) {
+      console.error("Error fetching training programs:", error);
+      return res.status(500).json({ error: "Failed to fetch training programs" });
+    }
+  });
+
+  app.get("/api/training-programs/admin", requireAuth, async (req, res) => {
+    try {
+      const programs = await storage.getTrainingPrograms(false);
+      return res.json(programs);
+    } catch (error) {
+      console.error("Error fetching training programs for admin:", error);
+      return res.status(500).json({ error: "Failed to fetch training programs" });
+    }
+  });
+
+  app.post("/api/training-programs", requireAuth, async (req, res) => {
+    try {
+      const result = insertTrainingProgramSchema.safeParse(req.body);
+
+      if (!result.success) {
+        const validationError = fromZodError(result.error);
+        return res.status(400).json({
+          error: "Validation failed",
+          details: validationError.message
+        });
+      }
+
+      const program = await storage.createTrainingProgram(result.data);
+      return res.status(201).json(program);
+    } catch (error) {
+      console.error("Error creating training program:", error);
+      return res.status(500).json({ error: "Failed to create training program" });
+    }
+  });
+
+  app.delete("/api/training-programs/:id", requireAuth, async (req, res) => {
+    try {
+      const deleted = await storage.deleteTrainingProgram(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Training program not found" });
+      }
+      return res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting training program:", error);
+      return res.status(500).json({ error: "Failed to delete training program" });
     }
   });
 

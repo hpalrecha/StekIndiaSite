@@ -58,7 +58,7 @@ export default function Products() {
             style={{ backgroundImage: `url(${categoryHeroImages[categorySlug] || ppfHeroImage})` }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
-          
+
           <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 w-full">
             <nav className="flex items-center gap-2 text-sm text-white/60 mb-6">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
@@ -67,7 +67,7 @@ export default function Products() {
               <ChevronRight className="h-4 w-4" />
               <span className="text-white">{category.name}</span>
             </nav>
-            
+
             <div className="max-w-2xl">
               <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
                 {category.name}
@@ -114,9 +114,9 @@ export default function Products() {
                             </div>
                           ))}
                         </div>
-                        <Link href="/contact">
+                        <Link href={sub.featuredProductSlug ? `/products/${categorySlug}/${sub.featuredProductSlug}` : "/contact"}>
                           <Button variant="outline" className="w-full gap-2" data-testid={`button-enquire-${sub.slug}`}>
-                            Enquire Now
+                            {sub.featuredProductSlug ? "View Details" : "Enquire Now"}
                             <ArrowRight className="h-4 w-4" />
                           </Button>
                         </Link>
@@ -176,13 +176,13 @@ export default function Products() {
             <ChevronRight className="h-4 w-4" />
             <span className="text-white">Products</span>
           </nav>
-          
+
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
               Our Products
             </h1>
             <p className="text-lg text-white/80 leading-relaxed">
-              Discover our comprehensive range of automotive protection solutions. 
+              Discover our comprehensive range of automotive protection solutions.
               From paint protection films to window tinting, we have everything to preserve your vehicle's brilliance.
             </p>
           </div>
@@ -237,7 +237,7 @@ export default function Products() {
               Not Sure Which Product You Need?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Our team is here to help you choose the perfect protection solution for your vehicle. 
+              Our team is here to help you choose the perfect protection solution for your vehicle.
               Contact us for expert guidance.
             </p>
             <div className="flex flex-wrap justify-center gap-4">

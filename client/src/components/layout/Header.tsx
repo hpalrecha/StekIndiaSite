@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, ChevronDown, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NAV_ITEMS, EXTERNAL_RESOURCES, STEK_GLOBAL_URL } from "@/lib/constants";
+import { NAV_ITEMS, RESOURCES_MENU, STEK_GLOBAL_URL } from "@/lib/constants";
 import type { NavItem } from "@shared/schema";
 
 export function Header() {
@@ -29,26 +29,24 @@ export function Header() {
         >
           <button
             onClick={() => isMobile && setOpenDropdown(openDropdown === item.label ? null : item.label)}
-            className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors ${
-              active
-                ? "text-primary"
-                : isMobile
+            className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors ${active
+              ? "text-primary"
+              : isMobile
                 ? "text-foreground hover:text-primary"
                 : "text-white/90 hover:text-white"
-            }`}
+              }`}
             data-testid={`nav-${item.label.toLowerCase()}`}
           >
             {item.label}
             <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
           </button>
-          
+
           {(isMobile ? openDropdown === item.label : openDropdown === item.label) && (
             <div
-              className={`${
-                isMobile
-                  ? "pl-4 space-y-1"
-                  : "absolute top-full left-0 mt-1 min-w-[220px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50"
-              }`}
+              className={`${isMobile
+                ? "pl-4 space-y-1"
+                : "absolute top-full left-0 mt-1 min-w-[220px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50"
+                }`}
             >
               {item.children!.map((child) => (
                 <Link
@@ -58,11 +56,10 @@ export function Header() {
                     setMobileMenuOpen(false);
                     setOpenDropdown(null);
                   }}
-                  className={`block px-4 py-2.5 text-sm transition-colors ${
-                    isMobile
-                      ? "text-muted-foreground hover:text-foreground"
-                      : "text-foreground hover:bg-muted hover:text-primary"
-                  }`}
+                  className={`block px-4 py-2.5 text-sm transition-colors ${isMobile
+                    ? "text-muted-foreground hover:text-foreground"
+                    : "text-foreground hover:bg-muted hover:text-primary"
+                    }`}
                   data-testid={`nav-${child.label.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   {child.label}
@@ -79,13 +76,12 @@ export function Header() {
         key={item.href}
         href={item.href}
         onClick={() => setMobileMenuOpen(false)}
-        className={`px-4 py-2 text-sm font-medium transition-colors ${
-          active
-            ? "text-primary"
-            : isMobile
+        className={`px-4 py-2 text-sm font-medium transition-colors ${active
+          ? "text-primary"
+          : isMobile
             ? "text-foreground hover:text-primary"
             : "text-white/90 hover:text-white"
-        }`}
+          }`}
         data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
       >
         {item.label}
@@ -97,57 +93,75 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full bg-zinc-900 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2" data-testid="link-logo">
-            <div className="flex items-center">
-              <span className="text-2xl font-bold text-white tracking-tight">STEK</span>
-              <span className="text-2xl font-light text-primary ml-1">INDIA</span>
-            </div>
+          <Link href="/" className="flex items-center" data-testid="link-logo">
+            <img src="/logo-light.png" alt="STEK INDIA" className="h-[22px] md:h-7 w-auto" />
           </Link>
+
 
           <nav className="hidden lg:flex items-center gap-1">
             {NAV_ITEMS.map((item) => renderNavItem(item))}
-            
+
             <div
-              className="relative group"
+              className="relative"
               onMouseEnter={() => setOpenDropdown("Resources")}
               onMouseLeave={() => setOpenDropdown(null)}
             >
               <button
-                className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors ${
-                  openDropdown === "Resources" ? "text-white" : "text-white/90 hover:text-white"
-                }`}
+                className={`flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors ${openDropdown === "Resources" ? "text-white" : "text-white/90 hover:text-white"
+                  }`}
                 data-testid="nav-resources"
               >
                 Resources
                 <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === "Resources" ? "rotate-180" : ""}`} />
               </button>
               {openDropdown === "Resources" && (
-                <div className="absolute top-full left-0 mt-1 min-w-[220px] bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-border py-2 z-50">
-                  {EXTERNAL_RESOURCES.map((resource) => (
-                    resource.external ? (
-                      <a
-                        key={resource.href}
-                        href={resource.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                        data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        {resource.label}
-                        <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                      </a>
-                    ) : (
-                      <Link
-                        key={resource.href}
-                        href={resource.href}
-                        onClick={() => setOpenDropdown(null)}
-                        className="block px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                        data-testid={`nav-resource-${resource.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        {resource.label}
-                      </Link>
-                    )
-                  ))}
+                <div className="absolute top-full left-0 mt-1 w-[800px] -translate-x-1/4 bg-black border border-white/10 p-8 shadow-2xl z-50 rounded-2xl backdrop-blur-xl">
+                  <div className="grid grid-cols-4 gap-12">
+                    {/* RESOURCES Column */}
+                    <div>
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-6 pb-2 border-b border-white/10">Resources</h4>
+                      <div className="space-y-4">
+                        {RESOURCES_MENU.resources.map((item) => (
+                          <Link key={item.href} href={item.href} className="block text-sm text-white/70 hover:text-primary transition-colors font-bold uppercase tracking-widest" onClick={() => setOpenDropdown(null)}>
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                    {/* DIGITAL Column */}
+                    <div>
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-6 pb-2 border-b border-white/10">Digital</h4>
+                      <div className="space-y-4">
+                        {RESOURCES_MENU.digital.map((item) => (
+                          <Link key={item.href} href={item.href} className="block text-sm text-white/70 hover:text-primary transition-colors font-bold uppercase tracking-widest" onClick={() => setOpenDropdown(null)}>
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                    {/* CONNECT Column */}
+                    <div>
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-6 pb-2 border-b border-white/10">Connect</h4>
+                      <div className="space-y-4">
+                        {RESOURCES_MENU.connect.map((item) => (
+                          <Link key={item.href} href={item.href} className="block text-sm text-white/70 hover:text-primary transition-colors font-bold uppercase tracking-widest" onClick={() => setOpenDropdown(null)}>
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                    {/* ABOUT Column */}
+                    <div>
+                      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-6 pb-2 border-b border-white/10">About</h4>
+                      <div className="space-y-4">
+                        {RESOURCES_MENU.about.map((item) => (
+                          <Link key={item.href} href={item.href} className="block text-sm text-white/70 hover:text-primary transition-colors font-bold uppercase tracking-widest" onClick={() => setOpenDropdown(null)}>
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -181,7 +195,7 @@ export function Header() {
         <div className="lg:hidden bg-background border-t border-border">
           <nav className="flex flex-col py-4 px-4">
             {NAV_ITEMS.map((item) => renderNavItem(item, true))}
-            
+
             <div className="mt-2 pt-2 border-t border-border">
               <button
                 onClick={() => setOpenDropdown(openDropdown === "Resources" ? null : "Resources")}
@@ -191,30 +205,26 @@ export function Header() {
                 <ChevronDown className={`h-4 w-4 transition-transform ${openDropdown === "Resources" ? "rotate-180" : ""}`} />
               </button>
               {openDropdown === "Resources" && (
-                <div className="pl-4">
-                  {EXTERNAL_RESOURCES.map((resource) => (
-                    resource.external ? (
-                      <a
-                        key={resource.href}
-                        href={resource.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {resource.label}
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    ) : (
-                      <Link
-                        key={resource.href}
-                        href={resource.href}
-                        className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {resource.label}
-                      </Link>
-                    )
+                <div className="pl-4 space-y-4 py-2">
+                  {Object.entries(RESOURCES_MENU).map(([category, items]) => (
+                    <div key={category}>
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">{category}</h4>
+                      <div className="space-y-1">
+                        {items.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="block px-3 py-2 text-sm text-foreground hover:text-primary transition-colors font-bold uppercase tracking-wider"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setOpenDropdown(null);
+                            }}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}

@@ -12,12 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Mail, Phone, Calendar, User, FileText, Plus, Pencil, Trash2, Eye, EyeOff, MessageSquare, Newspaper, LayoutDashboard, Lock, LogOut, Upload, Package } from "lucide-react";
-import type { ContactSubmission, BlogPost, InsertBlogPost, Product, InsertProduct } from "@shared/schema";
+import { Mail, Phone, Calendar, User, FileText, Plus, Pencil, Trash2, Eye, EyeOff, MessageSquare, Newspaper, LayoutDashboard, Lock, LogOut, Upload, Package, MapPin, GraduationCap } from "lucide-react";
+import type { ContactSubmission, BlogPost, InsertBlogPost, Product, InsertProduct, TrainingProgram, InsertTrainingProgram } from "@shared/schema";
 
 const blogCategories = ["News", "Products", "Education", "Events", "Tips & Tricks"];
-const brands = ["DYNO", "Lunarray", "Forceshield", "STEK", "STEK Formula"];
-const productCategories = ["Paint Protection Film", "Window Film", "Windshield Film", "Car Care"];
+const brands = ["DYNO", "Lunarray", "Forceshield", "STEK"];
+const productCategories = ["Paint Protection Film", "Window Film", "Windshield Film"];
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -80,8 +80,8 @@ function LoginPage() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-zinc-900 flex items-center justify-center">
-            <Lock className="h-6 w-6 text-white" />
+          <div className="mx-auto mb-4 flex justify-center">
+            <img src="/logo-dark.png" alt="STEK INDIA" className="h-12 w-auto" />
           </div>
           <CardTitle className="text-2xl">Admin Login</CardTitle>
           <CardDescription>Enter your credentials to access the admin portal</CardDescription>
@@ -137,6 +137,10 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
     queryKey: ["/api/products/admin"],
   });
 
+  const { data: trainingPrograms = [], isLoading: trainingLoading } = useQuery<TrainingProgram[]>({
+    queryKey: ["/api/training-programs/admin"],
+  });
+
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -158,9 +162,12 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
     <div className="min-h-screen bg-gray-50">
       <div className="bg-zinc-900 text-white py-6">
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Admin Portal</h1>
-            <p className="text-gray-400 text-sm mt-1">Manage your website content</p>
+          <div className="flex items-center gap-4">
+            <img src="/logo-light.png" alt="STEK INDIA" className="h-10 w-auto" />
+            <div>
+              <h1 className="text-2xl font-bold">Admin Portal</h1>
+              <p className="text-gray-400 text-sm mt-1">Manage your website content</p>
+            </div>
           </div>
           <Button variant="outline" onClick={handleLogout} className="text-white border-white hover:bg-white hover:text-zinc-900" data-testid="button-logout">
             <LogOut className="h-4 w-4 mr-2" />
@@ -188,14 +195,19 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
               <Newspaper className="h-4 w-4" />
               Blog
             </TabsTrigger>
+            <TabsTrigger value="training" className="flex items-center gap-2" data-testid="tab-training">
+              <GraduationCap className="h-4 w-4" />
+              Training
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard">
-            <DashboardTab 
-              contactsCount={contacts.length} 
+            <DashboardTab
+              contactsCount={contacts.length}
               publishedPosts={publishedPosts}
               draftPosts={draftPosts}
               productsCount={publishedProducts}
+              trainingCount={trainingPrograms.length}
               onNavigate={setActiveTab}
             />
           </TabsContent>
@@ -211,30 +223,36 @@ function AdminDashboard({ activeTab, setActiveTab }: { activeTab: string; setAct
           <TabsContent value="blog">
             <BlogTab posts={blogPosts} isLoading={postsLoading} />
           </TabsContent>
+
+          <TabsContent value="training">
+            <TrainingTab programs={trainingPrograms} isLoading={trainingLoading} />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
   );
 }
 
-function DashboardTab({ 
-  contactsCount, 
-  publishedPosts, 
+function DashboardTab({
+  contactsCount,
+  publishedPosts,
   draftPosts,
   productsCount,
-  onNavigate 
-}: { 
-  contactsCount: number; 
+  trainingCount,
+  onNavigate
+}: {
+  contactsCount: number;
   publishedPosts: number;
   draftPosts: number;
   productsCount: number;
+  trainingCount: number;
   onNavigate: (tab: string) => void;
 }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card 
-          className="cursor-pointer hover-elevate" 
+        <Card
+          className="cursor-pointer hover-elevate"
           onClick={() => onNavigate("enquiries")}
           data-testid="card-enquiries-summary"
         >
@@ -248,8 +266,8 @@ function DashboardTab({
           </CardContent>
         </Card>
 
-        <Card 
-          className="cursor-pointer hover-elevate" 
+        <Card
+          className="cursor-pointer hover-elevate"
           onClick={() => onNavigate("products")}
           data-testid="card-products-summary"
         >
@@ -263,8 +281,23 @@ function DashboardTab({
           </CardContent>
         </Card>
 
-        <Card 
-          className="cursor-pointer hover-elevate" 
+        <Card
+          className="cursor-pointer hover-elevate"
+          onClick={() => onNavigate("training")}
+          data-testid="card-training-summary"
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 gap-2">
+            <CardTitle className="text-sm font-medium">Training Programs</CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{trainingCount}</div>
+            <p className="text-xs text-muted-foreground">Active sessions</p>
+          </CardContent>
+        </Card>
+
+        <Card
+          className="cursor-pointer hover-elevate"
           onClick={() => onNavigate("blog")}
           data-testid="card-published-posts"
         >
@@ -278,8 +311,8 @@ function DashboardTab({
           </CardContent>
         </Card>
 
-        <Card 
-          className="cursor-pointer hover-elevate" 
+        <Card
+          className="cursor-pointer hover-elevate"
           onClick={() => onNavigate("blog")}
           data-testid="card-draft-posts"
         >
@@ -311,6 +344,10 @@ function DashboardTab({
           <Button onClick={() => onNavigate("blog")} variant="outline" data-testid="button-manage-blog">
             <Newspaper className="h-4 w-4 mr-2" />
             Manage Blog
+          </Button>
+          <Button onClick={() => onNavigate("training")} variant="outline" data-testid="button-manage-training">
+            <GraduationCap className="h-4 w-4 mr-2" />
+            Manage Training
           </Button>
         </CardContent>
       </Card>
@@ -350,8 +387,8 @@ function EnquiriesTab({ contacts, isLoading }: { contacts: ContactSubmission[]; 
 
       <div className="grid gap-4">
         {contacts.map((contact) => (
-          <Card 
-            key={contact.id} 
+          <Card
+            key={contact.id}
             className="cursor-pointer hover-elevate"
             onClick={() => setSelectedContact(contact)}
             data-testid={`card-enquiry-${contact.id}`}
@@ -626,8 +663,8 @@ function ProductsTab({ products, isLoading }: { products: Product[]; isLoading: 
     }
   };
 
-  const filteredProducts = filterBrand === "all" 
-    ? products 
+  const filteredProducts = filterBrand === "all"
+    ? products
     : products.filter(p => p.brand === filterBrand);
 
   if (isLoading) {
@@ -681,8 +718,8 @@ function ProductsTab({ products, isLoading }: { products: Product[]; isLoading: 
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex gap-4 flex-1 min-w-0">
                     {product.coverImage && (
-                      <img 
-                        src={product.coverImage} 
+                      <img
+                        src={product.coverImage}
                         alt={product.name}
                         className="w-16 h-16 object-cover rounded shrink-0"
                       />
@@ -901,8 +938,8 @@ function ProductsTab({ products, isLoading }: { products: Product[]; isLoading: 
               </div>
               {formData.coverImage && (
                 <div className="mt-2 relative">
-                  <img 
-                    src={formData.coverImage} 
+                  <img
+                    src={formData.coverImage}
                     alt="Cover preview"
                     className="w-full h-32 object-cover rounded border"
                   />
@@ -1170,8 +1207,8 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex gap-4 flex-1 min-w-0">
                     {post.coverImage && (
-                      <img 
-                        src={post.coverImage} 
+                      <img
+                        src={post.coverImage}
                         alt={post.title}
                         className="w-16 h-16 object-cover rounded shrink-0"
                       />
@@ -1354,8 +1391,8 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
               </div>
               {formData.coverImage && (
                 <div className="mt-2 relative">
-                  <img 
-                    src={formData.coverImage} 
+                  <img
+                    src={formData.coverImage}
                     alt="Cover preview"
                     className="w-full h-32 object-cover rounded border"
                   />
@@ -1421,3 +1458,194 @@ function BlogTab({ posts, isLoading }: { posts: BlogPost[]; isLoading: boolean }
     </div>
   );
 }
+
+function TrainingTab({ programs, isLoading }: { programs: TrainingProgram[]; isLoading: boolean }) {
+  const { toast } = useToast();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<TrainingProgram | null>(null);
+  const [formData, setFormData] = useState<InsertTrainingProgram>({
+    title: "",
+    location: "",
+    date: "",
+    description: "",
+    modules: [],
+    image: "",
+    published: true,
+  });
+  const [modulesText, setModulesText] = useState("");
+
+  const createMutation = useMutation({
+    mutationFn: async (data: InsertTrainingProgram) => {
+      const payload = { ...data, modules: modulesText.split("\n").filter(m => m.trim()) };
+      return apiRequest("POST", "/api/training-programs", payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/training-programs/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/training-programs"] });
+      setIsCreateOpen(false);
+      resetForm();
+      toast({ title: "Training program created successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to create training program", variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest("DELETE", `/api/training-programs/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/training-programs/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/training-programs"] });
+      setDeleteConfirm(null);
+      toast({ title: "Program deleted successfully" });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete program", variant: "destructive" });
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      location: "",
+      date: "",
+      description: "",
+      modules: [],
+      image: "",
+      published: true,
+    });
+    setModulesText("");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Training Programs</h2>
+        <Button onClick={() => setIsCreateOpen(true)} data-testid="button-create-training">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Program
+        </Button>
+      </div>
+
+      {programs.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <GraduationCap className="h-12 w-12 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900">No Programs Yet</h3>
+            <p className="text-gray-500 mt-1">Create your first training program session.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {programs.map((program) => (
+            <Card key={program.id}>
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">{program.title}</h3>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {program.location}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {program.date}
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setDeleteConfirm(program)}
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Training Program</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Program Title</Label>
+              <Input
+                value={formData.title}
+                onChange={(e) => setFormData(p => ({ ...p, title: e.target.value }))}
+                placeholder="e.g. PPF Professional Mastery"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Location</Label>
+              <Input
+                value={formData.location}
+                onChange={(e) => setFormData(p => ({ ...p, location: e.target.value }))}
+                placeholder="e.g. Mumbai Training Center"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Date / Schedule</Label>
+              <Input
+                value={formData.date || ""}
+                onChange={(e) => setFormData(p => ({ ...p, date: e.target.value }))}
+                placeholder="e.g. March 15-18, 2024"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Modules (one per line)</Label>
+              <Textarea
+                value={modulesText}
+                onChange={(e) => setModulesText(e.target.value)}
+                placeholder="Essential tools&#10;Surface prep&#10;Advanced stretching"
+                className="h-32"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
+            <Button onClick={() => createMutation.mutate(formData)}>Create Program</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Program?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{deleteConfirm?.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              onClick={() => deleteConfirm && deleteMutation.mutate(deleteConfirm.id)}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+

@@ -142,6 +142,7 @@ export interface ProductSubcategory {
   description: string;
   image: string;
   features: string[];
+  featuredProductSlug?: string;
 }
 
 // Solutions
@@ -153,10 +154,43 @@ export interface Solution {
   description: string;
   heroImage: string;
   benefits: string[];
-  offerings?: { name: string; description: string }[];
+  offerings?: { name: string; description: string; image?: string }[];
   products?: { name: string; description: string }[];
+  groups?: {
+    id: string;
+    title: string;
+    items: {
+      id: string;
+      title: string;
+      description: string;
+      image?: string;
+      features?: string[];
+      details?: { label: string; value: string }[];
+    }[];
+  }[];
   ctaText: string;
 }
+
+// Training Programs
+export const trainingPrograms = pgTable("training_programs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  location: text("location").notNull(),
+  date: text("date"),
+  description: text("description"),
+  modules: text("modules").array(),
+  image: text("image"),
+  published: boolean("published").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertTrainingProgramSchema = createInsertSchema(trainingPrograms).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertTrainingProgram = z.infer<typeof insertTrainingProgramSchema>;
+export type TrainingProgram = typeof trainingPrograms.$inferSelect;
 
 // Navigation
 export interface NavItem {

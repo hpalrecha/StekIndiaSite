@@ -9,6 +9,8 @@ import {
   type InsertBlogPost,
   type Product,
   type InsertProduct,
+  type TrainingProgram,
+  type InsertTrainingProgram,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -16,10 +18,10 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   createContactSubmission(contact: InsertContact): Promise<ContactSubmission>;
   getContactSubmissions(): Promise<ContactSubmission[]>;
-  
+
   getInstallers(): Promise<Installer[]>;
   getInstallersByState(state: string): Promise<Installer[]>;
   createInstaller(installer: InsertInstaller): Promise<Installer>;
@@ -39,6 +41,10 @@ export interface IStorage {
   createProduct(product: InsertProduct): Promise<Product>;
   updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: string): Promise<boolean>;
+
+  getTrainingPrograms(publishedOnly?: boolean): Promise<TrainingProgram[]>;
+  createTrainingProgram(program: InsertTrainingProgram): Promise<TrainingProgram>;
+  deleteTrainingProgram(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -47,6 +53,7 @@ export class MemStorage implements IStorage {
   private installers: Map<string, Installer>;
   private blogPosts: Map<string, BlogPost>;
   private products: Map<string, Product>;
+  private trainingPrograms: Map<string, TrainingProgram>;
 
   constructor() {
     this.users = new Map();
@@ -54,10 +61,12 @@ export class MemStorage implements IStorage {
     this.installers = new Map();
     this.blogPosts = new Map();
     this.products = new Map();
-    
+    this.trainingPrograms = new Map();
+
     this.seedInstallers();
     this.seedBlogPosts();
     this.seedProducts();
+    this.seedTrainingPrograms();
   }
 
   private seedInstallers() {
@@ -122,8 +131,8 @@ export class MemStorage implements IStorage {
 
     sampleInstallers.forEach((installer) => {
       const id = randomUUID();
-      this.installers.set(id, { 
-        ...installer, 
+      this.installers.set(id, {
+        ...installer,
         id,
         phone: installer.phone || null,
         email: installer.email || null,
@@ -197,7 +206,7 @@ Visit a STEK certified installer to explore our range of window film options.`,
     samplePosts.forEach((post) => {
       const id = randomUUID();
       const now = new Date();
-      this.blogPosts.set(id, { 
+      this.blogPosts.set(id, {
         id,
         title: post.title,
         slug: post.slug,
@@ -263,7 +272,7 @@ Visit a STEK certified installer to explore our range of window film options.`,
 
   async createInstaller(installer: InsertInstaller): Promise<Installer> {
     const id = randomUUID();
-    const newInstaller: Installer = { 
+    const newInstaller: Installer = {
       id,
       name: installer.name,
       address: installer.address,
@@ -317,7 +326,7 @@ Visit a STEK certified installer to explore our range of window film options.`,
   async updateBlogPost(id: string, post: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
     const existing = this.blogPosts.get(id);
     if (!existing) return undefined;
-    
+
     const updated: BlogPost = {
       ...existing,
       ...post,
@@ -492,7 +501,7 @@ Visit a STEK certified installer to explore our range of window film options.`,
   async updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined> {
     const existing = this.products.get(id);
     if (!existing) return undefined;
-    
+
     const updated: Product = {
       ...existing,
       ...product,
@@ -505,6 +514,52 @@ Visit a STEK certified installer to explore our range of window film options.`,
 
   async deleteProduct(id: string): Promise<boolean> {
     return this.products.delete(id);
+  }
+
+  private seedTrainingPrograms() {
+    const samplePrograms: InsertTrainingProgram[] = [];
+
+    samplePrograms.forEach((program) => {
+      const id = randomUUID();
+      this.trainingPrograms.set(id, {
+        ...program,
+        id,
+        date: program.date || null,
+        description: program.description || null,
+        modules: program.modules || null,
+        image: program.image || null,
+        published: program.published ?? true,
+        createdAt: new Date(),
+      });
+    });
+  }
+
+  async getTrainingPrograms(publishedOnly = false): Promise<TrainingProgram[]> {
+    const programs = Array.from(this.trainingPrograms.values());
+    const filtered = publishedOnly ? programs.filter((p) => p.published) : programs;
+    return filtered.sort(
+      (a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)
+    );
+  }
+
+  async createTrainingProgram(program: InsertTrainingProgram): Promise<TrainingProgram> {
+    const id = randomUUID();
+    const newProgram: TrainingProgram = {
+      ...program,
+      id,
+      date: program.date || null,
+      description: program.description || null,
+      modules: program.modules || null,
+      image: program.image || null,
+      published: program.published ?? true,
+      createdAt: new Date(),
+    };
+    this.trainingPrograms.set(id, newProgram);
+    return newProgram;
+  }
+
+  async deleteTrainingProgram(id: string): Promise<boolean> {
+    return this.trainingPrograms.delete(id);
   }
 }
 

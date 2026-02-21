@@ -4,13 +4,14 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ProductCard, ProductGrid, AnimatedHero, FeatureCard } from "@/components/ui/animated-card";
+import { ProductCard, ProductGrid, FeatureCard } from "@/components/ui/animated-card";
+import { HeroSlider } from "@/components/ui/hero-slider";
 import { STEK_GLOBAL_URL } from "@/lib/constants";
 
-import heroImage from "@assets/stock_images/luxury_car_paint_pro_303b9fb8.jpg";
-import ppfImage from "@assets/stock_images/luxury_car_paint_pro_0942a54c.jpg";
-import windowImage from "@assets/stock_images/car_window_tinting_p_2606050b.jpg";
-import carCareImage from "@assets/stock_images/professional_auto_de_4d79a865.jpg";
+const heroImage = "https://d31muh84oxzu1x.cloudfront.net/dcbb09af-4876-4c55-a248-b28c78d5a708.webp";
+const ppfImage = "https://d31muh84oxzu1x.cloudfront.net/91c983d9-83f9-486a-94a8-23f0afd0241d.webp";
+const windowImage = "https://d31muh84oxzu1x.cloudfront.net/2bb2f1cb-18ed-4f88-a92c-633842c161fb.webp";
+const carCareImage = "https://d31muh84oxzu1x.cloudfront.net/29660617-5ef6-421d-a976-b2de65df2251.webp";
 
 const keyFeatures = [
   {
@@ -41,51 +42,51 @@ const keyFeatures = [
 ];
 
 const clearSeries = [
-  { id: "shield", name: "DYNO shield", tagline: "Premium Shield", image: ppfImage },
-  { id: "lite", name: "DYNO lite", tagline: "Lightweight Strength", image: ppfImage },
-  { id: "lite-plus", name: "DYNO lite+", tagline: "Enhanced Lightweight Protection", image: ppfImage },
-  { id: "might", name: "DYNO might", tagline: "Ultimate Durability", image: ppfImage },
-  { id: "extreme", name: "DYNO extreme", tagline: "Ultimate Heatshield", image: ppfImage },
-  { id: "supreme", name: "DYNO supreme", tagline: "Say No to Water Spots", image: ppfImage },
-  { id: "pure", name: "DYNO pure", tagline: "Climate Combat", image: ppfImage },
-  { id: "pure-plus", name: "DYNO pure+", tagline: "Advanced Climate Protection", image: ppfImage },
-  { id: "prism", name: "DYNO prism", tagline: "Detailed Dimension", image: ppfImage },
+  { id: "dynoshield", name: "DYNOshield", tagline: "Premium Shield", image: "https://d31muh84oxzu1x.cloudfront.net/91c983d9-83f9-486a-94a8-23f0afd0241d.webp", slug: "dynoshield" },
+  { id: "dynolite", name: "DYNOlite", tagline: "Lightweight Strength", image: "https://d31muh84oxzu1x.cloudfront.net/6dcda684-30a2-4032-82cb-8e89481e86fd.webp", slug: "dynolite" },
+  { id: "lite-plus", name: "DYNOlite+", tagline: "Enhanced Lightweight Protection", image: "https://d31muh84oxzu1x.cloudfront.net/6dcda684-30a2-4032-82cb-8e89481e86fd.webp", slug: "dynolite" },
+  { id: "might", name: "DYNO might", tagline: "Ultimate Durability", image: "https://d31muh84oxzu1x.cloudfront.net/da3857dd-8d9e-49d9-87cd-be3b2bac31a4.webp", slug: "dynomight" },
+  { id: "extreme", name: "DYNO extreme", tagline: "Ultimate Heatshield", image: "https://d31muh84oxzu1x.cloudfront.net/b59d2921-39bb-46a3-b7c8-23f8eedcb31d.webp", slug: "dynoextreme" },
+  { id: "supreme", name: "DYNO supreme", tagline: "Say No to Water Spots", image: "https://d31muh84oxzu1x.cloudfront.net/729c6e31-6bde-4488-8f18-31a4eb265786.webp", slug: "dynosupreme" },
+  { id: "pure", name: "DYNO pure", tagline: "Climate Combat", image: "https://d31muh84oxzu1x.cloudfront.net/fab2e52e-28a7-46c9-86b8-bf2bf552df5c.webp", slug: "dynopure" },
+  { id: "pure-plus", name: "DYNO pure+", tagline: "Advanced Climate Protection", image: "https://d31muh84oxzu1x.cloudfront.net/fab2e52e-28a7-46c9-86b8-bf2bf552df5c.webp", slug: "dynopure" },
+  { id: "prism", name: "DYNO prism", tagline: "Detailed Dimension", image: "https://d31muh84oxzu1x.cloudfront.net/3e880fbb-a6da-4dd1-a6e8-f6afe53e345f.webp", slug: "dynoprism" },
 ];
 
 const colorSeries = [
-  { id: "black", name: "DYNO black", tagline: "Enter the Dark Side", image: heroImage },
-  { id: "red", name: "DYNO red", tagline: "Let's Paint the Town Red", image: heroImage },
-  { id: "green", name: "DYNO green", tagline: "More Than a Color, It's a Lifestyle", image: heroImage },
-  { id: "miami-blue", name: "DYNO miami-blue", tagline: "Vibrant Blue Meets Vigorous Protection", image: heroImage },
-  { id: "white", name: "DYNO white", tagline: "Dazzling, Luxurious Touch", image: heroImage },
-  { id: "gray", name: "DYNO gray", tagline: "Elegance, Resilience, Unmatched", image: heroImage },
-  { id: "purple", name: "DYNO purple", tagline: "The Royal Hue of Protection", image: heroImage },
-  { id: "shift-green", name: "DYNO shift-green", tagline: "Electric Shades of Green", image: heroImage },
+  { id: "dynoblack", name: "DYNOblack", tagline: "Enter the Dark Side", image: "https://d31muh84oxzu1x.cloudfront.net/dcbb09af-4876-4c55-a248-b28c78d5a708.webp", slug: "dynoblack" },
+  { id: "red", name: "DYNO red", tagline: "Let's Paint the Town Red", image: "https://d31muh84oxzu1x.cloudfront.net/1e675430-e5c6-4291-b9ec-b805d86678bf.webp", slug: "dynored" },
+  { id: "green", name: "DYNO green", tagline: "More Than a Color, It's a Lifestyle", image: "https://d31muh84oxzu1x.cloudfront.net/ff931931-ea0f-4dad-aecf-45f85e632da1.webp", slug: "dynogreen" },
+  { id: "miami-blue", name: "DYNO miami-blue", tagline: "Vibrant Blue Meets Vigorous Protection", image: "https://d31muh84oxzu1x.cloudfront.net/98d984e4-c4f9-4a4a-8da5-52d4e18f39c6.webp", slug: "dynomiami-blue" },
+  { id: "white", name: "DYNO white", tagline: "Dazzling, Luxurious Touch", image: "https://d31muh84oxzu1x.cloudfront.net/636b5d88-9adb-4974-b968-ab23b8009f6c.webp", slug: "dynowhite" },
+  { id: "gray", name: "DYNO gray", tagline: "Elegance, Resilience, Unmatched", image: "https://d31muh84oxzu1x.cloudfront.net/ea55ce5d-edf0-4b96-8bbf-bfc39f13a0a5.webp", slug: "dynogray" },
+  { id: "purple", name: "DYNO purple", tagline: "The Royal Hue of Protection", image: "https://d31muh84oxzu1x.cloudfront.net/d89e9c73-be2c-4ea0-812a-6e5d6fb3e536.webp", slug: "dynopurple" },
+  { id: "shift-green", name: "DYNO shift-green", tagline: "Electric Shades of Green", image: "https://d31muh84oxzu1x.cloudfront.net/7528c378-dabf-4941-92b8-594de6f6a451.webp" },
 ];
 
 const patternSeries = [
-  { id: "carbon", name: "DYNO carbon", tagline: "Ultimate Performance", image: ppfImage },
-  { id: "carbon-gloss", name: "DYNO carbon-gloss", tagline: "High-Performance Style", image: ppfImage },
-  { id: "carbon-matte", name: "DYNO carbon-matte", tagline: "High-Impact Protection", image: ppfImage },
+  { id: "dynocarbon", name: "DYNOcarbon", tagline: "Ultimate Performance", image: "https://d31muh84oxzu1x.cloudfront.net/7a5d9a84-80e4-40f3-8bb8-48ce5aab2c5a.webp", slug: "dynocarbon" },
+  { id: "carbon-gloss", name: "DYNO carbon-gloss", tagline: "High-Performance Style", image: "https://d31muh84oxzu1x.cloudfront.net/7a5d9a84-80e4-40f3-8bb8-48ce5aab2c5a.webp", slug: "dynocarbon-gloss" },
+  { id: "carbon-matte", name: "DYNO carbon-matte", tagline: "High-Impact Protection", image: "https://d31muh84oxzu1x.cloudfront.net/daaa8926-6dde-4d85-be8d-4d856f810454.webp", slug: "dynocarbon-matte" },
 ];
 
 const chromeSeries = [
-  { id: "chrome-black", name: "DYNO chrome-black", tagline: "Infinite Protection", image: heroImage },
-  { id: "chrome-black-matte", name: "DYNO chrome-black matte", tagline: "Silky Smoothness", image: heroImage },
-  { id: "chrome-blue", name: "DYNO chrome-blue", tagline: "Protection with Sapphire Shine", image: heroImage },
-  { id: "chrome-blue-matte", name: "DYNO chrome-blue matte", tagline: "Striking Presence of Cobalt Blue", image: heroImage },
+  { id: "chrome-black", name: "DYNO chrome-black", tagline: "Infinite Protection", image: "https://d31muh84oxzu1x.cloudfront.net/7d88ed9e-77c7-4153-9bcd-18790fe80ef2.jpg", slug: "dynochromeblack" },
+  { id: "chrome-black-matte", name: "DYNO chrome-black matte", tagline: "Silky Smoothness", image: "https://d31muh84oxzu1x.cloudfront.net/7d88ed9e-77c7-4153-9bcd-18790fe80ef2.jpg" },
+  { id: "chrome-blue", name: "DYNO chrome-blue", tagline: "Protection with Sapphire Shine", image: "https://d31muh84oxzu1x.cloudfront.net/7d9b1955-45fa-4a75-aba2-6234f6c0e6f4.webp" },
+  { id: "chrome-blue-matte", name: "DYNO chrome-blue matte", tagline: "Striking Presence of Cobalt Blue", image: "https://d31muh84oxzu1x.cloudfront.net/7d9b1955-45fa-4a75-aba2-6234f6c0e6f4.webp" },
 ];
 
 const headlightSeries = [
-  { id: "smoke", name: "DYNO smoke", tagline: "Intense Grey", image: windowImage },
-  { id: "shadow", name: "DYNO shadow", tagline: "Subtle Grey", image: windowImage },
-  { id: "shade", name: "DYNO shade", tagline: "Cool Elegance", image: windowImage },
-  { id: "storm", name: "DYNO storm", tagline: "Graphite in the Mist", image: windowImage },
-  { id: "fancy", name: "DYNO fancy", tagline: "Refined Golden Glow", image: windowImage },
+  { id: "dynosmoke", name: "DYNOsmoke", tagline: "Intense Grey", image: "https://d31muh84oxzu1x.cloudfront.net/9844ed92-ee68-4f8c-9970-8b1e384afeab.png", slug: "dynosmoke" },
+  { id: "shadow", name: "DYNO shadow", tagline: "Subtle Grey", image: "https://d31muh84oxzu1x.cloudfront.net/a0e698b1-ff55-4642-bf20-49e1bdcf3f10.webp" },
+  { id: "shade", name: "DYNO shade", tagline: "Cool Elegance", image: "https://d31muh84oxzu1x.cloudfront.net/b65cd74b-1737-432d-9ab1-f89547ff8e01.webp", slug: "dynoshad" },
+  { id: "storm", name: "DYNO storm", tagline: "Graphite in the Mist", image: "https://d31muh84oxzu1x.cloudfront.net/9844ed92-ee68-4f8c-9970-8b1e384afeab.png" },
+  { id: "fancy", name: "DYNO fancy", tagline: "Refined Golden Glow", image: "https://d31muh84oxzu1x.cloudfront.net/06d1cf36-5d37-401d-b56e-5cbf23810865.png", slug: "dynofancy" },
 ];
 
 const windshieldSeries = [
-  { id: "top", name: "DYNO top", tagline: "Ultimate Windshield Protection", image: windowImage },
+  { id: "top", name: "DYNO top", tagline: "Ultimate Windshield Protection", image: "https://d31muh84oxzu1x.cloudfront.net/29660617-5ef6-421d-a976-b2de65df2251.webp", slug: "dynotop" },
 ];
 
 interface ProductSectionProps {
@@ -124,8 +125,8 @@ function ProductSection({ title, description, products, id }: ProductSectionProp
               image={product.image}
               title={product.name}
               tagline={product.tagline}
-              href="/contact"
-              ctaText="Learn More"
+              href={(product as any).slug ? `/products/paint-protection-film/${(product as any).slug}` : "/contact"}
+              ctaText={(product as any).slug ? "Learn More" : "Enquire Now"}
               index={index}
             />
           ))}
@@ -140,38 +141,68 @@ export default function DynoBrand() {
 
   return (
     <div>
-      <AnimatedHero
-        backgroundImage={heroImage}
-        subtitle="STEK Automotive"
-        title="Drive Yours, Nobody Owns"
-        description="DYNO offers more than just protection — we deliver exclusivity. Our premium solutions for high-end vehicles are designed for those who understand that true luxury is something not everyone can have, but everyone desires."
-      >
-        <nav className="flex items-center gap-2 text-sm text-white/60 mb-8">
-          <Link href="/" className="hover:text-white transition-colors">Home</Link>
-          <ChevronRight className="h-4 w-4" />
-          <Link href="/brands" className="hover:text-white transition-colors">Brands</Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-white">DYNO</span>
-        </nav>
-        <div className="flex flex-wrap gap-4">
-          <Link href="/installer-locator">
-            <Button size="lg" className="gap-2" data-testid="button-find-installer-dyno">
-              Find an Installer
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/contact">
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
-              data-testid="button-get-quote-dyno"
-            >
-              Get a Quote
-            </Button>
-          </Link>
-        </div>
-      </AnimatedHero>
+      <HeroSlider
+        slides={[
+          {
+            image: heroImage,
+            subtitle: "STEK Automotive",
+            title: "Drive Yours, Nobody Owns",
+            description: "DYNO offers more than just protection — we deliver exclusivity. Our premium solutions for high-end vehicles are designed for those who understand that true luxury is something not everyone can have, but everyone desires.",
+            cta: (
+              <div className="flex flex-wrap gap-4">
+                <Link href="/installer-locator">
+                  <Button size="lg" className="gap-2" data-testid="button-find-installer-dyno">
+                    Find an Installer
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                    data-testid="button-get-quote-dyno"
+                  >
+                    Get a Quote
+                  </Button>
+                </Link>
+              </div>
+            )
+          },
+          {
+            image: ppfImage,
+            subtitle: "Clear Protection",
+            title: "Premium Shield Technology",
+            description: "Experience the ultimate in clear paint protection. Our DYNO shield series provides superior defense against rock chips, scratches, and environmental hazards while maintaining a mirror-like finish.",
+            cta: (
+              <div className="flex flex-wrap gap-4">
+                <Link href="#clear">
+                  <Button size="lg" className="gap-2">
+                    Explore Clear Series
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            )
+          },
+          {
+            image: carCareImage,
+            subtitle: "Advanced Solutions",
+            title: "Beyond Just Protection",
+            description: "From self-healing properties to extreme hydrophobic performance, STEK DYNO represents the pinnacle of automotive care technology. Your vehicle deserves nothing less than perfection.",
+            cta: (
+              <div className="flex flex-wrap gap-4">
+                <Link href="/contact">
+                  <Button size="lg" className="gap-2">
+                    Schedule Consultation
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            )
+          }
+        ]}
+      />
 
       <section className="py-16 bg-muted/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

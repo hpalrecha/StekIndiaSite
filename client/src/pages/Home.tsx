@@ -1,330 +1,221 @@
 import { Link } from "wouter";
-import { useRef } from "react";
-import { ArrowRight, Shield, Award, Users, Sparkles, CheckCircle } from "lucide-react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useRef, useState } from "react";
+import { ArrowRight, Shield, Award, Users, Sparkles, CheckCircle, Search, MapPin } from "lucide-react";
+import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductCard, ProductGrid, FeatureCard } from "@/components/ui/animated-card";
-import { HeroSlider } from "@/components/ui/hero-slider";
 import { PRODUCT_CATEGORIES, SOLUTIONS, STEK_GLOBAL_URL } from "@/lib/constants";
 
-import heroImage from "@assets/stock_images/luxury_car_paint_pro_303b9fb8.jpg";
-import installersImage from "@assets/stock_images/professional_auto_de_0dbcaf65.jpg";
-import dealershipsImage from "@assets/stock_images/car_dealership_showr_6eee07be.jpg";
-import architecturalImage from "@assets/stock_images/modern_glass_buildin_b8a9e927.jpg";
-import ppfImage from "@assets/stock_images/luxury_car_paint_pro_0942a54c.jpg";
-import windowImage from "@assets/stock_images/car_window_tinting_p_2606050b.jpg";
-import windshieldImage from "@assets/stock_images/car_window_tinting_p_2bad5a81.jpg";
-import carCareImage from "@assets/stock_images/professional_auto_de_4d79a865.jpg";
-
-const productImages: Record<string, string> = {
-  "paint-protection-film": ppfImage,
-  "window-film": windowImage,
-  "windshield-film": windshieldImage,
-  "car-care": carCareImage,
+// Global Site Image Assets
+const GLOBAL_IMAGES = {
+  ppf: "https://d31muh84oxzu1x.cloudfront.net/4bddf1b8-6939-4fdf-817d-2b32d361fec7.webp",
+  window: "https://d31muh84oxzu1x.cloudfront.net/2cfc032d-96d4-42bd-b6bf-ef51ffe98a87.webp",
+  windshield: "https://d31muh84oxzu1x.cloudfront.net/619db2c1-dfff-4109-80a1-056750337f25.webp",
+  formula: "https://d31muh84oxzu1x.cloudfront.net/3d1a10dc-5726-4150-8aa5-049303da786c.webp",
+  solutions: {
+    premiumShop: "https://d31muh84oxzu1x.cloudfront.net/8d669869-9146-4f8f-b3e5-68489d98c89a.webp",
+    businessTool: "https://d31muh84oxzu1x.cloudfront.net/f2a2c253-be65-4e11-b9d8-2e0a3561f2b5.png",
+    software: "https://d31muh84oxzu1x.cloudfront.net/e26c704a-369e-4d56-bb95-49f12772009a.webp",
+    training: "https://d31muh84oxzu1x.cloudfront.net/797802c7-3178-4353-ad2a-8af08624c669.webp"
+  }
 };
 
-const solutionImages: Record<string, string> = {
-  installers: installersImage,
-  dealerships: dealershipsImage,
-  architectural: architecturalImage,
-};
+const GLOBAL_HERO_VIDEO = "https://hq.stekautomotive.com/assets/b7fbc46b-1303-48d0-9270-d7eb2874edc0";
 
-const features = [
+const PRODUCT_LINES = [
   {
-    icon: <Shield className="h-7 w-7" />,
-    title: "Superior Protection",
-    description: "Advanced technology that shields your vehicle from scratches, rock chips, and environmental damage.",
+    id: "ppf",
+    name: "Paint Protection Film",
+    title: "DYNO SERIES",
+    description: "The world's first and most advanced self-healing paint protection film with unique styling and protection features.",
+    image: GLOBAL_IMAGES.ppf,
+    href: "/brands/dyno"
   },
   {
-    icon: <Award className="h-7 w-7" />,
-    title: "Premium Quality",
-    description: "Industry-leading materials with self-healing properties and long-lasting performance.",
+    id: "window",
+    name: "Window Film",
+    title: "WINDOW PROTECTION",
+    description: "Experience superior heat rejection and UV protection with our range of ceramic and graphene-infused window films.",
+    image: GLOBAL_IMAGES.window,
+    href: "/brands/lunaray"
   },
   {
-    icon: <Users className="h-7 w-7" />,
-    title: "Certified Installers",
-    description: "Nationwide network of trained professionals ensuring flawless installation.",
+    id: "windshield",
+    name: "Windshield Protection Film",
+    title: "DYNOtop",
+    description: "High-transparency protection for your windshield, guarding against chips and cracks while maintaining clarity.",
+    image: GLOBAL_IMAGES.windshield,
+    href: "/products/windshield-film/dynotop"
   },
   {
-    icon: <Sparkles className="h-7 w-7" />,
-    title: "Lasting Brilliance",
-    description: "Preserve your vehicle's showroom finish with UV-resistant, hydrophobic coatings.",
-  },
+    id: "formula",
+    name: "STEK FORMULA",
+    title: "CARE & MAINTENANCE",
+    description: "Professional-grade chemicals specifically engineered to maintain and protect your high-performance films.",
+    image: GLOBAL_IMAGES.formula,
+    href: "/brands/formula"
+  }
 ];
 
-const stats = [
-  { value: "10+", label: "Years of Excellence" },
-  { value: "500+", label: "Certified Installers" },
-  { value: "50K+", label: "Protected Vehicles" },
-  { value: "100%", label: "Customer Satisfaction" },
+const TOTAL_CARE = [
+  {
+    title: "STEK PREMIUM SHOP",
+    subtitle: "AUTHORIZE SHOP",
+    description: "Join the elite network of STEK authorized shops and access exclusive products.",
+    image: GLOBAL_IMAGES.solutions.premiumShop,
+    cta: "Learn More",
+    href: "/solutions/installers"
+  },
+  {
+    title: "BUSINESS TOOL",
+    subtitle: "MANAGE BETTER",
+    description: "Streamline your operations with our proprietary business management solutions.",
+    image: GLOBAL_IMAGES.solutions.businessTool,
+    cta: "Learn More",
+    href: "/solutions/dealerships"
+  },
+  {
+    title: "PRE-CUT SOFTWARE",
+    subtitle: "EFFICIENCY",
+    description: "Access our comprehensive library of precision-designed pre-cut patterns.",
+    image: GLOBAL_IMAGES.solutions.software,
+    cta: "Start Cutting",
+    href: "/pre-cut-software"
+  },
+  {
+    title: "PRODUCT TRAINING",
+    subtitle: "EXPERT INSIGHTS",
+    description: "Master the art of installation with our professional training programs.",
+    image: GLOBAL_IMAGES.solutions.training,
+    cta: "Learn More",
+    href: "/training-program"
+  }
 ];
 
 export default function Home() {
   const prefersReducedMotion = useReducedMotion();
-  const statsRef = useRef<HTMLElement>(null);
-  const statsInView = useInView(statsRef, { once: true });
+  const [activeTab, setActiveTab] = useState(PRODUCT_LINES[0].id);
 
   return (
-    <div>
-      <HeroSlider
-        slides={[
-          {
-            image: heroImage,
-            subtitle: "Premium Protection",
-            title: "Premium Protection for Your Vehicle",
-            description: "STEK India offers world-class paint protection films and window tinting solutions. Protect your investment with industry-leading technology and certified installation.",
-            cta: (
-              <div className="flex flex-wrap gap-4">
-                <Link href="/products/paint-protection-film">
-                  <Button size="lg" className="gap-2" data-testid="button-explore-products">
-                    Explore Products
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/installer-locator">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
-                    data-testid="button-find-installer"
-                  >
-                    Find an Installer
-                  </Button>
-                </Link>
-              </div>
-            )
-          },
-          {
-            image: ppfImage,
-            subtitle: "Advanced Technology",
-            title: "Self-Healing Paint Protection",
-            description: "Keep your car looking new with our advanced self-healing paint protection films. Say goodbye to scratches and rock chips.",
-            cta: (
-              <div className="flex flex-wrap gap-4 pt-8">
-                <Link href="/products/paint-protection-film">
-                  <Button size="lg" className="gap-2">
-                    Discover PPF
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            )
-          },
-          {
-            image: windowImage,
-            subtitle: "Comfort & Privacy",
-            title: "Premium Window Tinting",
-            description: "Experience superior heat rejection and UV protection with our range of ceramic window films.",
-            cta: (
-              <div className="flex flex-wrap gap-4 pt-8">
-                <Link href="/products/window-film">
-                  <Button size="lg" className="gap-2">
-                    View Window Films
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            )
-          }
-        ]}
-      />
-
-      <section className="py-20 bg-background">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Our Products
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover our comprehensive range of automotive protection solutions designed to preserve and enhance your vehicle.
-            </p>
-          </motion.div>
-
-          <ProductGrid columns={4}>
-            {PRODUCT_CATEGORIES.map((category, index) => (
-              <ProductCard
-                key={category.slug}
-                image={productImages[category.slug] || ppfImage}
-                title={category.name}
-                tagline={category.description}
-                href={`/products/${category.slug}`}
-                ctaText="Learn More"
-                index={index}
-              />
-            ))}
-          </ProductGrid>
+    <div className="bg-[#010101] text-white overflow-x-hidden">
+      {/* 1. HERO SECTION */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={GLOBAL_HERO_VIDEO} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="relative z-10 text-center px-4 max-w-5xl">
+          <h1 className="sr-only">
+            ADVANCED SOLUTIONS FOR PROTECTION
+          </h1>
+          <p className="sr-only">
+            Automotive | Marine | Architectural | Software
+          </p>
         </div>
       </section>
 
-      <section className="py-20 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+      {/* 2. VERTICAL PRODUCT GALLERY */}
+      <section className="bg-[#010101]">
+        {PRODUCT_LINES.map((line, index) => (
+          <div
+            key={line.id}
+            className={`flex flex-col ${index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"} min-h-[80vh] border-b border-white/5`}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Why Choose STEK India?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We combine cutting-edge technology with expert installation to deliver unmatched vehicle protection.
-            </p>
-          </motion.div>
+            {/* Image Side */}
+            <motion.div
+              className="w-full lg:w-1/2 relative overflow-hidden h-[50vh] lg:h-auto"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+            >
+              <img src={line.image} alt={line.name} className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
+            </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={feature.title}
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-                index={index}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-background">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-16"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Solutions for Every Need
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Whether you're an installer, dealership, or looking for architectural solutions, we have the right partnership for you.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {SOLUTIONS.map((solution, index) => (
+            {/* Content Side */}
+            <div className="w-full lg:w-1/2 flex items-center p-8 md:p-16 lg:p-24 bg-[#080808]">
               <motion.div
-                key={solution.slug}
-                initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="max-w-xl"
               >
-                <Link href={`/solutions/${solution.slug}`} className="group block">
-                  <Card className="overflow-hidden h-full transition-all duration-300 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 group-hover:scale-[1.02]">
-                    <div className="aspect-[16/10] overflow-hidden">
-                      <img
-                        src={solutionImages[solution.slug] || installersImage}
-                        alt={solution.name}
-                        loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <CardContent className="p-6">
-                      <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
-                        {solution.name}
-                      </h3>
-                      <p className="text-muted-foreground mb-4 line-clamp-2">
-                        {solution.description}
-                      </p>
-                      <ul className="space-y-2 mb-4">
-                        {solution.benefits.slice(0, 3).map((benefit, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                            <span>{benefit}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="flex items-center text-primary font-medium">
-                        Learn More
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </div>
-                    </CardContent>
-                  </Card>
+                <p className="text-primary font-black tracking-[0.4em] text-[10px] mb-6 uppercase">{line.name}</p>
+                <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] uppercase tracking-tighter">
+                  {line.title}
+                </h2>
+                <p className="text-white/50 text-lg mb-12 font-medium leading-relaxed">
+                  {line.description}
+                </p>
+                <Link href={line.href}>
+                  <Button variant="outline" className="border-white/30 rounded-none px-12 h-14 uppercase font-black tracking-widest text-xs hover:bg-white hover:text-black transition-all">
+                    Explore Series
+                  </Button>
                 </Link>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section ref={statsRef} className="py-16 bg-zinc-900 dark:bg-zinc-950">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="text-center"
-                initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-                animate={statsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm sm:text-base text-white/70">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="relative py-24 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${installersImage})` }}
-        />
-        <div className="absolute inset-0 bg-black/70" />
-
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="max-w-2xl mx-auto text-center"
-            initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-              Become a Certified STEK Installer
-            </h2>
-            <p className="text-lg text-white/80 mb-8">
-              Join our network of professional installers and grow your business with premium STEK products, training, and support.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a
-                href={`${STEK_GLOBAL_URL}/become-installer`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button size="lg" className="gap-2" data-testid="button-apply-now">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </a>
-              <Link href="/contact">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
-                  data-testid="button-contact-us"
-                >
-                  Contact Us
-                </Button>
-              </Link>
             </div>
-          </motion.div>
+          </div>
+        ))}
+      </section>
+
+      {/* 3. TOTAL CARE SOLUTIONS (2X2 GRID) */}
+      <section className="py-24 bg-[#010101]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-20">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4">STEK TOTAL CARE SOLUTIONS</h2>
+            <p className="text-white/40 font-bold tracking-[0.2em] uppercase text-xs">Innovation | Business | Professional</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+            {TOTAL_CARE.map((item, index) => (
+              <Link key={index} href={item.href} className="relative aspect-square md:aspect-[16/10] overflow-hidden group">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
+                <div className="absolute inset-0 p-12 flex flex-col justify-end">
+                  <div className="max-w-md">
+                    <p className="text-primary font-black tracking-[0.2em] text-[10px] mb-2 uppercase">{item.subtitle}</p>
+                    <h3 className="text-2xl md:text-3xl font-black mb-4 uppercase">{item.title}</h3>
+                    <p className="text-white/70 text-sm mb-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {item.description}
+                    </p>
+                    <Button variant="outline" className="border-white/30 rounded-none px-8 h-10 uppercase font-black tracking-widest text-[10px]">
+                      {item.cta}
+                    </Button>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* 5. TRAINING CTA */}
+      <section className="relative py-32 overflow-hidden flex items-center justify-center">
+        <div className="absolute inset-0">
+          <img src={GLOBAL_IMAGES.solutions.training} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/80" />
+        </div>
+        <div className="relative z-10 text-center px-4">
+          <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">BECOME AN OFFICIAL<br />STEK INSTALLER</h2>
+          <Link href="/become-installer">
+            <Button size="xl" className="bg-primary text-white hover:bg-primary/90 rounded-none px-12 h-14 font-black uppercase tracking-widest text-xs">
+              Become an Installer
+            </Button>
+          </Link>
         </div>
       </section>
     </div>

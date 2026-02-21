@@ -54,7 +54,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 w-full">
                                 <div className="max-w-3xl">
                                     {slide.subtitle && (
-                                        <p className="text-primary font-medium text-lg mb-4">
+                                        <p className="text-primary font-bold text-sm uppercase tracking-[0.2em] mb-4">
                                             {slide.subtitle}
                                         </p>
                                     )}
@@ -79,8 +79,8 @@ export function HeroSlider({ slides }: HeroSliderProps) {
             </CarouselContent>
             {slides.length > 1 && (
                 <>
-                    <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 text-white border-transparent hidden group-hover:flex" />
-                    <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 text-white border-transparent hidden group-hover:flex" />
+                    <CarouselPrevious className="left-4 bg-black/50 hover:bg-black/70 text-white border-transparent hidden group-hover:flex transition-all duration-300" />
+                    <CarouselNext className="right-4 bg-black/50 hover:bg-black/70 text-white border-transparent hidden group-hover:flex transition-all duration-300" />
                 </>
             )}
         </Carousel>

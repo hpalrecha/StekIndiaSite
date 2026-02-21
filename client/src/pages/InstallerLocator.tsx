@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { ChevronRight, ArrowRight, ExternalLink, MapPin } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -13,6 +13,14 @@ const INSTALLER_LOCATOR_URL = "https://www.stekautomotive.com/find-an-installer"
 export default function InstallerLocator() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  // Reset scroll of locator container on mount and iframe load
+  useEffect(() => {
+    const container = document.querySelector('.overflow-y-auto');
+    if (container) {
+      container.scrollTop = 0;
+    }
+  }, [iframeLoaded]);
 
   return (
     <div>
@@ -80,8 +88,11 @@ export default function InstallerLocator() {
           </motion.div>
 
           <motion.div
-            className="relative w-full rounded-md overflow-hidden border border-border bg-muted"
-            style={{ height: "700px" }}
+            className="relative w-full rounded-md overflow-hidden border border-border bg-muted overflow-y-auto"
+            style={{
+              height: "900px",
+              overscrollBehaviorY: "contain"
+            }}
             initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -94,19 +105,18 @@ export default function InstallerLocator() {
                 </div>
               </div>
             )}
-            <div 
-              className="w-full h-full overflow-hidden"
+            <div
+              className="w-full"
               style={{ pointerEvents: "auto" }}
             >
               <iframe
-                src={INSTALLER_LOCATOR_URL}
+                src={`${INSTALLER_LOCATOR_URL}?address=India`}
                 title="STEK Installer Locator"
                 className="w-full border-0"
                 scrolling="no"
-                style={{ 
-                  height: "1500px",
-                  marginTop: "-750px",
-                  overflow: "hidden",
+                style={{
+                  height: "4500px",
+                  marginTop: "-810px",
                 }}
                 onLoad={() => setIframeLoaded(true)}
                 allow="geolocation"
@@ -122,7 +132,7 @@ export default function InstallerLocator() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Installer data provided by STEK Automotive global network. 
+            Installer data provided by STEK Automotive global network.
             <a
               href={INSTALLER_LOCATOR_URL}
               target="_blank"
