@@ -100,24 +100,17 @@ export default function Home() {
   return (
     <div className="bg-[#010101] text-white overflow-x-hidden">
       {/* 1. HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src={GLOBAL_HERO_VIDEO} type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-black/10" />
-        <div className="relative z-10 text-center px-4 max-w-5xl">
-          <h1 className="sr-only">
-            ADVANCED SOLUTIONS FOR PROTECTION
-          </h1>
-          <p className="sr-only">
-            Automotive | Marine | Architectural | Software
-          </p>
+      <section className="relative bg-black h-auto aspect-video xl:h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-contain xl:object-cover object-center"
+          >
+            <source src={GLOBAL_HERO_VIDEO} type="video/MP4" />
+          </video>
         </div>
       </section>
 
@@ -149,15 +142,15 @@ export default function Home() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="max-w-xl"
               >
-                <p className="text-primary font-black tracking-[0.4em] text-[10px] mb-6 uppercase">{line.name}</p>
-                <h2 className="text-4xl md:text-6xl font-black mb-8 leading-[1.1] uppercase tracking-tighter">
+                <p className="text-primary font-black tracking-[0.4em] text-[10px] mb-4 md:mb-6 uppercase">{line.name}</p>
+                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-6 md:mb-8 leading-[1.1] uppercase tracking-tighter">
                   {line.title}
                 </h2>
-                <p className="text-white/50 text-lg mb-12 font-medium leading-relaxed">
+                <p className="text-white/50 text-base md:text-lg mb-8 md:mb-12 font-medium leading-relaxed">
                   {line.description}
                 </p>
                 <Link href={line.href}>
-                  <Button variant="outline" className="border-white/30 rounded-none px-12 h-14 uppercase font-black tracking-widest text-xs hover:bg-white hover:text-black transition-all">
+                  <Button variant="outline" className="border-white/30 rounded-none px-10 md:px-12 h-12 md:h-14 uppercase font-black tracking-widest text-[10px] md:text-xs hover:bg-white hover:text-black transition-all">
                     Explore Series
                   </Button>
                 </Link>
@@ -184,14 +177,14 @@ export default function Home() {
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
-                <div className="absolute inset-0 p-12 flex flex-col justify-end">
+                <div className="absolute inset-0 p-6 md:p-12 flex flex-col justify-end">
                   <div className="max-w-md">
                     <p className="text-primary font-black tracking-[0.2em] text-[10px] mb-2 uppercase">{item.subtitle}</p>
-                    <h3 className="text-2xl md:text-3xl font-black mb-4 uppercase">{item.title}</h3>
-                    <p className="text-white/70 text-sm mb-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <h3 className="text-xl md:text-3xl font-black mb-2 md:mb-4 uppercase">{item.title}</h3>
+                    <p className="text-white/70 text-xs md:text-sm mb-4 md:mb-8 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {item.description}
                     </p>
-                    <Button variant="outline" className="border-white/30 rounded-none px-8 h-10 uppercase font-black tracking-widest text-[10px]">
+                    <Button variant="outline" className="border-white/30 rounded-none px-6 md:px-8 h-8 md:h-10 uppercase font-black tracking-widest text-[9px] md:text-[10px]">
                       {item.cta}
                     </Button>
                   </div>

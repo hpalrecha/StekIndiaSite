@@ -87,13 +87,13 @@ export default function Contact() {
             <ChevronRight className="h-4 w-4" />
             <span className="text-white">Contact</span>
           </nav>
-          
+
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
               Contact Us
             </h1>
             <p className="text-lg text-white/80 leading-relaxed">
-              Have a question or want to learn more about our products and services? 
+              Have a question or want to learn more about our products and services?
               We'd love to hear from you.
             </p>
           </div>
@@ -127,7 +127,7 @@ export default function Contact() {
                     <h2 className="text-2xl font-bold text-foreground mb-6">
                       Send Us a Message
                     </h2>
-                    
+
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -148,7 +148,7 @@ export default function Contact() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="email"
@@ -179,7 +179,7 @@ export default function Contact() {
                                 <FormControl>
                                   <Input
                                     type="tel"
-                                    placeholder="+91 XXXXX XXXXX"
+                                    placeholder="83104 82800"
                                     {...field}
                                     value={field.value || ""}
                                     data-testid="input-phone"
@@ -189,7 +189,7 @@ export default function Contact() {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="subject"
@@ -267,7 +267,7 @@ export default function Contact() {
                   <h3 className="text-lg font-semibold text-foreground mb-4">
                     Contact Information
                   </h3>
-                  
+
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
@@ -276,7 +276,7 @@ export default function Contact() {
                         <p>{COMPANY_INFO.address}</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-3">
                       <Phone className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                       <div className="text-sm">
@@ -289,7 +289,7 @@ export default function Contact() {
                         </a>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-3">
                       <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                       <div className="text-sm">
@@ -302,7 +302,7 @@ export default function Contact() {
                         </a>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-start gap-3">
                       <Clock className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                       <div className="text-sm">
@@ -342,27 +342,6 @@ export default function Contact() {
         </div>
       </section>
 
-      <section className="py-16 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">
-              Visit Our Office
-            </h2>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              We welcome you to visit our headquarters in Mumbai. Please schedule an appointment before visiting.
-            </p>
-            <div className="aspect-[16/9] max-w-4xl mx-auto bg-muted rounded-md overflow-hidden flex items-center justify-center">
-              <div className="text-center p-8">
-                <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  Interactive map coming soon.<br />
-                  Please contact us for directions.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

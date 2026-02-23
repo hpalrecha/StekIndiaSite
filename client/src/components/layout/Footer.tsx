@@ -37,17 +37,26 @@ export function Footer() {
             <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-8">Brands</h4>
             <ul className="space-y-4">
               <li><Link href="/brands/dyno" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">DYNO Series</Link></li>
-              <li><Link href="/brands/stek-formula" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">STEK Formula</Link></li>
+              <li><Link href="/brands/formula" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">STEK Formula</Link></li>
               <li><Link href="/brands/forceshield" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">Forceshield</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-8">Resources</h4>
-            <ul className="space-y-4">
-              <li><Link href="/installer-locator" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">Find Installer</Link></li>
-              <li><Link href="/resources/training" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">Training</Link></li>
-              <li><Link href="/blog" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">News & Blog</Link></li>
+            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-8">Contact</h4>
+            <ul className="space-y-4 text-[10px] text-white/40 font-bold uppercase tracking-widest">
+              <li className="leading-relaxed">
+                {COMPANY_INFO.address}
+              </li>
+              <li>
+                <a href={`tel:${COMPANY_INFO.phone}`} className="hover:text-white transition-colors">{COMPANY_INFO.phone}</a>
+              </li>
+              <li>
+                <a href={`mailto:${COMPANY_INFO.email}`} className="hover:text-white transition-colors">{COMPANY_INFO.email}</a>
+              </li>
+              <li>
+                <a href={`https://${COMPANY_INFO.website}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{COMPANY_INFO.website}</a>
+              </li>
             </ul>
           </div>
         </div>

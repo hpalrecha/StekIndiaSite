@@ -491,9 +491,10 @@ export const SOLUTIONS: Solution[] = [
 export const COMPANY_INFO = {
   name: "STEK India",
   tagline: "Premium Protection for Every Surface",
-  phone: "+91 1800-XXX-XXXX",
-  email: "info@stekindia.com",
-  address: "STEK India Headquarters, Mumbai, Maharashtra, India",
+  phone: "83104 82800",
+  email: "info@stek-india.in",
+  website: "www.stek-india.in",
+  address: "Ward 117, 49, Bannerghatta Rd, Ayappa Garden, Shanti Nagar, Bengaluru, Karnataka 560030",
   social: {
     facebook: "https://facebook.com/stekindia",
     instagram: "https://instagram.com/stekindia",

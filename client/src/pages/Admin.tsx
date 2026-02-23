@@ -1598,7 +1598,7 @@ function TrainingTab({ programs, isLoading }: { programs: TrainingProgram[]; isL
               <Input
                 value={formData.location}
                 onChange={(e) => setFormData(p => ({ ...p, location: e.target.value }))}
-                placeholder="e.g. Mumbai Training Center"
+                placeholder="e.g. Bengaluru Training Center"
               />
             </div>
             <div className="space-y-2">
