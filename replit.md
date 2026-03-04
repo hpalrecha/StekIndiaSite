@@ -18,7 +18,8 @@ A modern, responsive company website for STEK India replicating the design and s
 - **Forms**: React Hook Form + Zod validation
 - **State Management**: TanStack Query
 - **Backend**: Express.js
-- **Storage**: In-memory storage (MemStorage)
+- **Database**: PostgreSQL with Drizzle ORM (persistent storage)
+- **DB Driver**: @neondatabase/serverless
 
 ## Project Structure
 ```
@@ -45,7 +46,8 @@ client/src/
 
 server/
 ├── routes.ts               # API endpoints
-├── storage.ts              # In-memory storage
+├── db.ts                   # Database connection (PostgreSQL via Drizzle)
+├── storage.ts              # Database-backed storage (DatabaseStorage)
 └── index.ts                # Server entry
 
 shared/
@@ -86,7 +88,9 @@ You can customize these by setting environment variables:
 - `ADMIN_PASSWORD` - Custom admin password
 
 ## Recent Changes
-- Added unified Admin Portal (/admin) with dashboard, enquiries, and blog management
+- Migrated from in-memory storage to PostgreSQL database for persistent data storage
+- All data (contact enquiries, blog posts, products, installers) now persists across server restarts
+- Added unified Admin Portal (/admin) with dashboard, enquiries, products, and blog management
 - Created Blog system with CMS capabilities
 - Updated navigation Resources menu with correct external/internal links
 - Initial site build with all pages and components
