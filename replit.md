@@ -83,9 +83,7 @@ Access the admin portal at `/admin` to manage:
 - **Username**: admin
 - **Password**: stek2024
 
-You can customize these by setting environment variables:
-- `ADMIN_USERNAME` - Custom admin username
-- `ADMIN_PASSWORD` - Custom admin password
+Admin credentials are stored in the PostgreSQL database with bcrypt-hashed passwords.
 
 ## Recent Changes
 - Migrated from in-memory storage to PostgreSQL database for persistent data storage

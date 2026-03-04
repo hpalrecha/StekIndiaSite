@@ -4,12 +4,10 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import bcrypt from "bcryptjs";
 import { storage } from "./storage";
 import { insertContactSchema, insertBlogPostSchema, insertProductSchema, insertTrainingProgramSchema } from "@shared/schema";
 import { fromZodError } from "zod-validation-error";
-
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "stek2024";
 
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
@@ -57,15 +55,25 @@ export async function registerRoutes(
     next();
   }, express.static(uploadsDir));
 
-  app.post("/api/auth/login", (req, res) => {
+  app.post("/api/auth/login", async (req, res) => {
     const { username, password } = req.body;
 
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      req.session.isAdmin = true;
-      return res.json({ success: true, message: "Login successful" });
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password are required" });
     }
 
-    return res.status(401).json({ error: "Invalid username or password" });
+    const user = await storage.getUserByUsername(username);
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    req.session.isAdmin = true;
+    return res.json({ success: true, message: "Login successful" });
   });
 
   app.post("/api/auth/logout", (req, res) => {
