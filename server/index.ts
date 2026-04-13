@@ -1,9 +1,11 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import MemoryStore from "memorystore";
+import bcrypt from "bcryptjs";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { storage } from "./storage";
 
 const app = express();
 const httpServer = createServer(app);
@@ -85,7 +87,20 @@ app.use((req, res, next) => {
   next();
 });
 
+async function seedAdminUser() {
+  const adminUsername = process.env.ADMIN_USERNAME || "admin";
+  const adminPassword = process.env.ADMIN_PASSWORD || "stek2024";
+
+  const existing = await storage.getUserByUsername(adminUsername);
+  if (!existing) {
+    const hashed = await bcrypt.hash(adminPassword, 10);
+    await storage.createUser({ username: adminUsername, password: hashed });
+    log(`Admin user '${adminUsername}' created`);
+  }
+}
+
 (async () => {
+  await seedAdminUser();
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
