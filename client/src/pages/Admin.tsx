@@ -64,9 +64,7 @@ function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast({ title: "Login successful" });
-        await queryClient.invalidateQueries({ queryKey: ["/api/auth/check"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/auth/check"] });
+        queryClient.setQueryData(["/api/auth/check"], { isAuthenticated: true });
       } else {
         toast({ title: data.error || "Login failed", variant: "destructive" });
       }
