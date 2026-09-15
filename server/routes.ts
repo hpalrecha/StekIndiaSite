@@ -55,6 +55,45 @@ export async function registerRoutes(
     next();
   }, express.static(uploadsDir));
 
+  /**
+   * Public warranty verification proxy.
+   *
+   * STEK-branded warranties are registered in P91 Elite, which puts
+   * stek-india.in/verify/<code> on their QR (see P91Elite
+   * `api-server/src/services/verify-url.ts`). The warranty data still lives in
+   * P91's database, so we forward the lookup server-side — this keeps P91's
+   * CORS allowlist untouched and its API origin off the browser.
+   */
+  app.get("/api/verify/:code", async (req, res) => {
+    const code = (req.params.code || "").trim();
+    if (!code) {
+      return res.status(400).json({ success: false, message: "Warranty code is required" });
+    }
+
+    const upstreamBase = process.env.P91_API_BASE || "https://p91india.com";
+
+    try {
+      const upstream = await fetch(
+        `${upstreamBase}/api/erp/public/verify/${encodeURIComponent(code)}`,
+        { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(10_000) }
+      );
+
+      const body = await upstream.json().catch(() => null);
+      if (!body) {
+        return res
+          .status(502)
+          .json({ success: false, message: "Verification service unavailable" });
+      }
+
+      return res.status(upstream.status).json(body);
+    } catch (error) {
+      console.error("Warranty verify proxy error:", error);
+      return res
+        .status(502)
+        .json({ success: false, message: "Verification service unavailable" });
+    }
+  });
+
   app.post("/api/auth/login", async (req, res) => {
     const { username, password } = req.body;
 

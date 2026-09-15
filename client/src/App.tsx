@@ -32,6 +32,7 @@ import Studio3D from "@/pages/Studio3D";
 import Partnerships from "@/pages/Partnerships";
 import Sustainability from "@/pages/Sustainability";
 import NotFound from "@/pages/not-found";
+import Verify from "@/pages/Verify";
 
 function Router() {
   return (
@@ -39,6 +40,9 @@ function Router() {
       <Route path="/admin">
         <Admin />
       </Route>
+      {/* Public warranty verification — standalone, outside the marketing Layout */}
+      <Route path="/verify/:code" component={Verify} />
+      <Route path="/verify" component={Verify} />
       <Route>
         <Layout>
           <Switch>

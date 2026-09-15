@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.github
+uploads
+*.tar.gz
+.DS_Store
+server/public
+vite.preview.config.ts
+project.zip
