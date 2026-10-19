@@ -42,6 +42,7 @@ export const RESOURCES_MENU = {
     { label: "STEK", href: "/about" },
     { label: "Sustainability", href: "/sustainability" },
     { label: "Partnerships", href: "/partnerships" },
+    { label: "P91 Car Care", href: "/p91-car-care" },
   ]
 };
 
@@ -1493,3 +1494,6 @@ export const FORMULA_PRODUCTS: FormulaProduct[] = [
     imageUrl: "https://d31muh84oxzu1x.cloudfront.net/10fec223-c3fe-4511-b199-4e9ed5db1138.webp"
   }
 ];
+
+// P91 Car Care — our own Bengaluru studio. In dev, links open the local P91 app (CarCareBooker, port 5000).
+export const P91_URL = import.meta.env.DEV ? "http://localhost:5000" : "https://p91carcare.com";

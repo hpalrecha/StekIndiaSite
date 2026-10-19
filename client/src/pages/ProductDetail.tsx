@@ -129,7 +129,9 @@ export default function ProductDetail() {
                                 <h3 className="text-2xl font-bold text-foreground mb-8">Key Performance Features</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {product.features.map((feature, idx) => {
-                                        const Icon = featureIcons[feature] || Check;
+                                        const title = typeof feature === "string" ? feature : feature.title;
+                                        const detail = typeof feature === "string" ? undefined : feature.description;
+                                        const Icon = featureIcons[title] || Check;
                                         return (
                                             <Card key={idx} className="bg-muted/30 border-none hover:bg-muted/50 transition-colors">
                                                 <CardContent className="p-6 flex items-start gap-4">
@@ -137,7 +139,8 @@ export default function ProductDetail() {
                                                         <Icon className="h-5 w-5" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-semibold text-foreground">{feature}</p>
+                                                        <p className="font-semibold text-foreground">{title}</p>
+                                                        {detail && <p className="text-sm text-muted-foreground mt-1">{detail}</p>}
                                                     </div>
                                                 </CardContent>
                                             </Card>
