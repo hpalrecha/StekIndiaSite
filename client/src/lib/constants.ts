@@ -42,7 +42,7 @@ export const RESOURCES_MENU = {
     { label: "STEK", href: "/about" },
     { label: "Sustainability", href: "/sustainability" },
     { label: "Partnerships", href: "/partnerships" },
-    { label: "P91 Car Care", href: "/p91-car-care" },
+    { label: "P91 Car Care", href: "/partner/p91carcare" },
   ]
 };
 

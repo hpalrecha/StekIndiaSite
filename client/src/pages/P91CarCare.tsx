@@ -40,7 +40,7 @@ const PAGE_TITLE = "P91 Car Care — Our Bengaluru Studio | STEK India";
 const PAGE_DESCRIPTION =
     "STEK India is the authorized STEK distributor. P91 Car Care is our own Bengaluru studio for paint protection film, ceramic coating, detailing and sun control film.";
 
-const CANONICAL_URL = "https://stek-india.in/p91-car-care";
+const CANONICAL_URL = "https://stek-india.in/partner/p91carcare";
 
 export default function P91CarCare() {
     useEffect(() => {
