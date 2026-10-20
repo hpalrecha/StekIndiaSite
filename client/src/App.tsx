@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { PlaceholderPage } from "@/components/layout/PlaceholderPage";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -78,7 +78,10 @@ function Router() {
             <Route path="/training-program" component={TrainingProgram} />
             <Route path="/sustainability" component={Sustainability} />
             <Route path="/partnerships" component={Partnerships} />
-            <Route path="/p91-car-care" component={P91CarCare} />
+            <Route path="/partner/p91carcare" component={P91CarCare} />
+            <Route path="/p91-car-care">
+              <Redirect to="/partner/p91carcare" />
+            </Route>
 
             <Route component={NotFound} />
           </Switch>

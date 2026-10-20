@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Shield, Globe, Award, Users, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
+import { Shield, Globe, Award, Users, ChevronRight, type LucideIcon } from "lucide-react";
 
-const partnerships = [
+const partnerships: { category: string; items: { title: string; description: string; icon: LucideIcon; tags: string[]; href?: string }[] }[] = [
     {
         category: "Industry Associations",
         items: [
@@ -22,6 +23,18 @@ const partnerships = [
                 description: "Representing the largest global car culture organization, focusing on specialty automotive parts and innovation.",
                 icon: Globe,
                 tags: ["Car Culture", "Innovation"]
+            }
+        ]
+    },
+    {
+        category: "Our Studio",
+        items: [
+            {
+                title: "P91 Car Care",
+                description: "Our own car care studio in Bengaluru, where we install and maintain the STEK films and coatings we distribute.",
+                icon: Shield,
+                tags: ["Bengaluru", "Studio"],
+                href: "/partner/p91carcare"
             }
         ]
     },
@@ -120,6 +133,9 @@ export default function Partnerships() {
                                         </div>
 
                                         <div className="absolute bottom-0 left-0 h-1 bg-red-600 w-0 group-hover:w-full transition-all duration-700" />
+                                        {partner.href && (
+                                            <Link href={partner.href} className="absolute inset-0 z-20" aria-label={partner.title} />
+                                        )}
                                     </motion.div>
                                 ))}
                             </div>
