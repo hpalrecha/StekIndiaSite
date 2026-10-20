@@ -33,7 +33,6 @@ import Partnerships from "@/pages/Partnerships";
 import Sustainability from "@/pages/Sustainability";
 import NotFound from "@/pages/not-found";
 import Verify from "@/pages/Verify";
-import P91CarCare from "@/pages/P91CarCare";
 
 function Router() {
   return (
@@ -78,9 +77,11 @@ function Router() {
             <Route path="/training-program" component={TrainingProgram} />
             <Route path="/sustainability" component={Sustainability} />
             <Route path="/partnerships" component={Partnerships} />
-            <Route path="/partner/p91carcare" component={P91CarCare} />
             <Route path="/p91-car-care">
-              <Redirect to="/partner/p91carcare" />
+              <Redirect to="/partnerships" />
+            </Route>
+            <Route path="/partner/p91carcare">
+              <Redirect to="/partnerships" />
             </Route>
 
             <Route component={NotFound} />

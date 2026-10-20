@@ -28,7 +28,6 @@ export function Footer() {
             <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-8">About Us</h4>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">Company</Link></li>
-              <li><Link href="/partner/p91carcare" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">P91 Car Care</Link></li>
               <li><Link href="/sustainability" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">Sustainability</Link></li>
               <li><Link href="/contact" className="text-sm text-white/60 hover:text-white transition-colors font-bold uppercase tracking-widest text-[10px]">Contact</Link></li>
             </ul>
