@@ -30,6 +30,7 @@ import InstallerPortal from "@/pages/InstallerPortal";
 import PreCutSoftware from "@/pages/PreCutSoftware";
 import Studio3D from "@/pages/Studio3D";
 import Partnerships from "@/pages/Partnerships";
+import P91Partner from "@/pages/P91Partner";
 import Sustainability from "@/pages/Sustainability";
 import NotFound from "@/pages/not-found";
 import Verify from "@/pages/Verify";
@@ -78,10 +79,14 @@ function Router() {
             <Route path="/sustainability" component={Sustainability} />
             <Route path="/partnerships" component={Partnerships} />
             <Route path="/p91-car-care">
-              <Redirect to="/partnerships" />
+              <Redirect to="/partnership/p91carcare" />
+            </Route>
+            <Route path="/partnership/p91carcare" component={P91Partner} />
+            <Route path="/partnerships/p91carcare">
+              <Redirect to="/partnership/p91carcare" />
             </Route>
             <Route path="/partner/p91carcare">
-              <Redirect to="/partnerships" />
+              <Redirect to="/partnership/p91carcare" />
             </Route>
 
             <Route component={NotFound} />

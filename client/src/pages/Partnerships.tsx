@@ -126,7 +126,7 @@ export default function Partnerships() {
                             </div>
                         </div>
                     ))}
-                    <P91Studio />
+                    <P91Studio showPageLink />
                 </div>
             </section>
 

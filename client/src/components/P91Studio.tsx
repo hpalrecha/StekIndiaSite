@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { ArrowUpRight, MapPin, Phone, Shield, Sparkles, Droplets, Sun, Wrench } from "lucide-react";
 import { P91_URL } from "@/lib/constants";
 
@@ -35,7 +36,7 @@ const services = [
     },
 ];
 
-export function P91Studio() {
+export function P91Studio({ showPageLink = false }: { showPageLink?: boolean }) {
     return (
         <div id="our-own-studio" className="mt-24 scroll-mt-28">
             <motion.div
@@ -76,6 +77,11 @@ export function P91Studio() {
                     >
                         Visit P91 Car Care <ArrowUpRight className="h-4 w-4" />
                     </a>
+                    {showPageLink && (
+                        <Link href="/partnership/p91carcare" className="mt-6 block text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white transition-colors">
+                            View studio page
+                        </Link>
+                    )}
                 </div>
             </div>
 
